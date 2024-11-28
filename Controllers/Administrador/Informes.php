@@ -63,6 +63,28 @@ $conn->close();
         }
         .card {
             margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 10px 20px 35px #5557;
+        }
+        .modal-content {
+            border-radius: 10px;
+        }
+        .modal-body {
+            background-color: #eae9e9;
+        }
+        .btn-primary {
+            background-color: #fff;
+            border: none;
+            color: black;
+        }
+        .btn-primary:hover {
+            background-color: #cdcdcd;
+        }
+        table {
+            border-radius: 10px;
+        }
+        tbody {
+            background-color: #f3f3f3;
         }
     </style>
 </head>

@@ -59,14 +59,6 @@ function getRoleName($id_rol) {
         .card {
             margin-bottom: 20px;
         }
-        .btn-suspend {
-            background-color: #ffc107;
-            color: #fff;
-        }
-        .btn-activate {
-            background-color: #28a745;
-            color: #fff;
-        }
     </style>
 </head>
 <body>
@@ -77,9 +69,9 @@ function getRoleName($id_rol) {
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav"></div>
+        <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"></li>
+                <li class="nav-item">
                     <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'Administrador-Dashboard.php' ? 'active' : ''; ?>" href="../Administrador-Dashboard.php"><i class="fas fa-home"></i> Inicio</a>
                 </li>
                 <li class="nav-item">
@@ -137,11 +129,10 @@ function getRoleName($id_rol) {
                                     <th>Nombre</th>
                                     <th>Email</th>
                                     <th>Rol</th>
-                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="userTableCoordinadores"></tbody></tbody>
+                            <tbody id="userTableCoordinadores">
                                 <?php foreach ($users as $user): ?>
                                     <?php if ($user['id_rol'] == 2): ?>
                                         <tr>
@@ -149,7 +140,6 @@ function getRoleName($id_rol) {
                                             <td><?php echo !empty($user['nombre']) ? htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8') : 'N/A'; ?></td>
                                             <td><?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td><?php echo getRoleName($user['id_rol']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['estatus_cuenta'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm edit-btn" 
                                                     data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" 
@@ -158,11 +148,6 @@ function getRoleName($id_rol) {
                                                     data-role="<?php echo htmlspecialchars($user['id_rol'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
                                                 <button class="btn btn-danger btn-sm delete-btn" 
                                                     data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Eliminar</button>
-                                                <button class="btn btn-sm suspend-btn <?php echo $user['estatus_cuenta'] == 'Activo' ? 'btn-suspend' : 'btn-activate'; ?>" 
-                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" 
-                                                    data-status="<?php echo htmlspecialchars($user['estatus_cuenta'], ENT_QUOTES, 'UTF-8'); ?>">
-                                                    <?php echo $user['estatus_cuenta'] == 'Activo' ? 'Suspender' : 'Activar'; ?>
-                                                </button>
                                             </td>
                                         </tr>
                                     <?php endif; ?>
@@ -209,6 +194,16 @@ function getRoleName($id_rol) {
                             <label for="edit-email">Email</label>
                             <input type="email" class="form-control" id="edit-email" name="email">
                         </div>
+                        <div class="form-group">
+                            <label for="edit-role">Rol</label>
+                            <select class="form-control" id="edit-role" name="id_rol">
+                                <option value="1">Administrador</option>
+                                <option value="2">Coordinador</option>
+                                <option value="3">Beneficiario</option>
+                                <option value="4">Voluntario</option>
+                                <option value="5">Donador</option>
+                            </select>
+                        </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>
                 </div>
@@ -237,7 +232,7 @@ function getRoleName($id_rol) {
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
@@ -267,22 +262,6 @@ function getRoleName($id_rol) {
         $('#confirmDeleteBtn').on('click', function() {
             var id = $(this).data('id');
             window.location.href = '../mecanicas/delete_user.php?id=' + id;
-        });
-
-        // Script para suspender/activar usuario
-        $('.suspend-btn').on('click', function() {
-            var id = $(this).data('id');
-            var status = $(this).data('status');
-            var action = status === 'Activo' ? 'suspender' : 'activar';
-
-            $.ajax({
-                url: '../mecanicas/solicitudes.php',
-                type: 'POST',
-                data: { id_usuario: id, [action]: true },
-                success: function(response) {
-                    location.reload(); // Recarga la página para reflejar los cambios
-                }
-            });
         });
     </script>
 </body>

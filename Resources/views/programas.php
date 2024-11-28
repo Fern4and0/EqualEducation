@@ -1,7 +1,4 @@
 <?php
-
-session_start();
-
 include '../../DB/DB.php';
 
 $sql = "SELECT id, nombre, descripcion ,fecha_ini, fecha_fin, foto FROM programas ORDER BY fecha_ini ASC";
@@ -31,52 +28,8 @@ $conn->close();
     </style>
 </head>
 <body>
-<div class="preloader">
-      <div class="preloader-body">
-        <div class="cssload-container">
-          <div class="cssload-speeding-wheel"></div>
-        </div>
-        <p>Loading...</p>
-      </div>
-    </div>
-    <div class="page">
-      <!-- Page Header-->
-      <header class="section page-header">
-        <!-- RD Navbar-->
-        <div class="rd-navbar-wrap">
-          <nav class="rd-navbar rd-navbar-classic" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-static" data-lg-device-layout="rd-navbar-static" data-xl-layout="rd-navbar-static" data-xl-device-layout="rd-navbar-static" data-xxl-layout="rd-navbar-static" data-xxl-device-layout="rd-navbar-static" data-lg-stick-up-offset="46px" data-xl-stick-up-offset="46px" data-xxl-stick-up-offset="46px" data-lg-stick-up="true" data-xl-stick-up="true" data-xxl-stick-up="true">
-            <div class="rd-navbar-main-outer">
-              <div class="rd-navbar-main">
-                <!-- RD Navbar Panel-->
-                <div class="rd-navbar-panel">
-                  <!-- RD Navbar Toggle-->
-                  <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
-                  <!-- RD Navbar Brand-->
-                  <div class="rd-navbar-brand"><a href="../views/index.php"><img class="brand-logo-light" src="../Images/logo.png" alt="" width="100" height=""/></a></div>
-                </div>
-                <div class="rd-navbar-main-element">
-                  <div class="rd-navbar-nav-wrap">
-                    <!-- RD Navbar Nav-->
-                    <ul class="rd-navbar-nav">
-                      <li class="rd-nav-item"><a class="rd-nav-link" href="../views/index.php">Inicio</a>
-                      </li>
-                      <li class="rd-nav-item active"><a class="rd-nav-link" href="../views/programas.php">Programas</a>
-                      </li>
-                      <li class="rd-nav-item"><a class="rd-nav-link" href="../views/nosotros.html">Sobre nosotros</a>
-                      </li>
-                      <li class="rd-nav-item"><a class="rd-nav-link" href="../views/Modals.php">Unete</a>
-                      </li>
-                      <li class="rd-nav-item"><a class="rd-nav-link" href="../views/login.html">Iniciar sesión</a>
-                      </li>
-                    </ul><a class="button button-primary button-sm" href="../views/donaciones.php">Donar</a>
-                  </div>
-                </div><a class="button button-primary button-sm" href="../views/donaciones.php">Donar</a>
-              </div>
-            </div>
-          </nav>
-        </div>
-      </header>
-
+    <div class="page">   
+    <?php include('header.php');?>
       <section class="parallax-container" data-parallax-img="../../Public/image/img4.jpg">
         <div class="parallax-content breadcrumbs-custom context-dark">
           <div class="container">

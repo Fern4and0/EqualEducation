@@ -9,51 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 include '../../../DB/db.php'; // Incluye la conexión a la base de datos
 
-// Función para suspender una cuenta
-function suspenderCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Suspendido' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        die("Error preparing statement: {$conn->error}");
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        die("Error executing statement: {$stmt->error}");
-    }
-    $stmt->close();
-}
-
-// Función para activar una cuenta
-function activarCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Activo' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        die("Error preparing statement: " . $conn->error);
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        die("Error executing statement: " . $stmt->error);
-    }
-    $stmt->close();
-}
-
-// Manejar solicitudes AJAX
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'];
-    $id_usuario = $_POST['id_usuario'];
-
-    if ($action === 'suspender') {
-        suspenderCuenta($id_usuario);
-    } elseif ($action === 'activar') {
-        activarCuenta($id_usuario);
-    }
-
-    echo json_encode(['status' => 'success']);
-    exit();
-}
-
 // Obtener lista de usuarios
 $sql = "SELECT * FROM users"; // Se define la consulta SQL para obtener todos los usuarios
 $result = $conn->query($sql); // Ejecuta la consulta y guarda el resultado
@@ -108,7 +63,7 @@ function getRoleName($id_rol) {
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#" style="padding: 10;">
+        <a class="navbar-brand" href="#" style="padding: 10;"></a>
             <img src="../../Resources/Images/logo.png" width="50" height="50" class="d-inline-block align-top" alt="Equal Education Logo">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -128,7 +83,7 @@ function getRoleName($id_rol) {
                 <li class="nav-item">
                     <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'Informes.php' ? 'active' : ''; ?>" href="../Informes.php"><i class="fas fa-file-alt"></i> Generación de Informes</a>
                 </li>
-                <li class="nav-item"></li></li>
+                <li class="nav-item">
                     <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'Solicitudes.php' ? 'active' : ''; ?>" href="../mecanicas/Solicitudes.php"><i class="fas fa-envelope"></i> Solicitudes</a>
                 </li>
                 <li class="nav-item dropdown">
@@ -177,7 +132,6 @@ function getRoleName($id_rol) {
                                     <th>Nombre</th>
                                     <th>Email</th>
                                     <th>Rol</th>
-                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -189,14 +143,14 @@ function getRoleName($id_rol) {
                                             <td><?php echo !empty($user['nombre']) ? htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8') : 'N/A'; ?></td>
                                             <td><?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td><?php echo getRoleName($user['id_rol']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['estatus_cuenta'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td>
+                                                <button class="btn btn-primary btn-sm edit-btn" 
+                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                                    data-name="<?php echo htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                                    data-email="<?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                                    data-role="<?php echo htmlspecialchars($user['id_rol'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
                                                 <button class="btn btn-danger btn-sm delete-btn" 
                                                     data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Eliminar</button>
-                                                <button class="btn btn-warning btn-sm suspend-btn" 
-                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Suspender</button>
-                                                <button class="btn btn-success btn-sm activate-btn" 
-                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Activar</button>
                                             </td>
                                         </tr>
                                     <?php endif; ?>
@@ -217,35 +171,46 @@ function getRoleName($id_rol) {
                             row.style.display = (name.includes(input) || email.includes(input)) ? '' : 'none';
                         });
                     });
-
-                    // Script para manejar la suspensión y activación de cuentas
-                    document.querySelectorAll('.suspend-btn, .activate-btn').forEach(function(button) {
-                        button.addEventListener('click', function() {
-                            var id = this.dataset.id;
-                            var action = this.classList.contains('suspend-btn') ? 'suspender' : 'activar';
-
-                            fetch('', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                },
-                                body: new URLSearchParams({
-                                    action: action,
-                                    id_usuario: id
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status === 'success') {
-                                    location.reload(); // Recarga la página para reflejar los cambios
-                                } else {
-                                    alert('Error al actualizar el estado de la cuenta.');
-                                }
-                            });
-                        });
-                    });
                 </script>
 
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar usuario -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Editar Usuario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" action="../mecanicas/edit_user.php" method="POST">
+                        <input type="hidden" id="edit-id" name="id">
+                        <div class="form-group">
+                            <label for="edit-name">Nombre</label>
+                            <input type="text" class="form-control" id="edit-name" name="nombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-email">Email</label>
+                            <input type="email" class="form-control" id="edit-email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-role">Rol</label>
+                            <select class="form-control" id="edit-role" name="id_rol">
+                                <option value="1">Administrador</option>
+                                <option value="2">Coordinador</option>
+                                <option value="3">Beneficiario</option>
+                                <option value="4">Voluntario</option>
+                                <option value="5">Donador</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -275,6 +240,21 @@ function getRoleName($id_rol) {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        // Script para pasar los datos al modal de edición
+        $('.edit-btn').on('click', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            var email = $(this).data('email');
+            var role = $(this).data('role');
+
+            $('#edit-id').val(id);
+            $('#edit-name').val(name);
+            $('#edit-email').val(email);
+            $('#edit-role').val(role);
+
+            $('#editModal').modal('show'); // Muestra el modal
+        });
+
         // Script para pasar el ID al modal de confirmación de eliminación
         $('.delete-btn').on('click', function() {
             var id = $(this).data('id');

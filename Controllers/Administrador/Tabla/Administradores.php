@@ -9,36 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 include '../../../DB/db.php'; // Incluye la conexión a la base de datos
 
-// Función para suspender una cuenta
-function suspenderCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Suspendido' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        die("Error preparing statement: {$conn->error}");
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        die("Error executing statement: {$stmt->error}");
-    }
-    $stmt->close();
-}
-
-// Función para activar una cuenta
-function activarCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Activo' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        die("Error preparing statement: " . $conn->error);
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        die("Error executing statement: " . $stmt->error);
-    }
-    $stmt->close();
-}
-
 // Obtener lista de usuarios
 $sql = "SELECT * FROM users"; // Se define la consulta SQL para obtener todos los usuarios
 $result = $conn->query($sql); // Ejecuta la consulta y guarda el resultado
@@ -104,13 +74,13 @@ function getRoleName($id_rol) {
                 <li class="nav-item">
                     <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'Administrador-Dashboard.php' ? 'active' : ''; ?>" href="../Administrador-Dashboard.php"><i class="fas fa-home"></i> Inicio</a>
                 </li>
-                <li class="nav-item"></li>
+                <li class="nav-item">
                     <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'Donaciones.php' ? 'active' : ''; ?>" href="../Donaciones.php"><i class="fas fa-donate"></i> Registro de Donaciones y Gastos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'Monitoreo.php' ? 'active' : ''; ?>" href="../Monitoreo.php"><i class="fas fa-chart-line"></i> Monitoreo de Indicadores</a>
                 </li>
-                <li class="nav-item"></li>
+                <li class="nav-item">
                     <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'Informes.php' ? 'active' : ''; ?>" href="../Informes.php"><i class="fas fa-file-alt"></i> Generación de Informes</a>
                 </li>
                 <li class="nav-item dropdown">
@@ -125,7 +95,7 @@ function getRoleName($id_rol) {
                         <a class="dropdown-item" href="Voluntarios.php">Voluntarios</a>
                     </div>
                 </li>
-                <li class="nav-item dropdown"></li>
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user"></i>
                     </a>
@@ -167,11 +137,10 @@ function getRoleName($id_rol) {
                                 <th>Nombre</th>
                                 <th>Email</th>
                                 <th>Rol</th>
-                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="userTableAdministradores"></tbody></tbody>
+                        <tbody id="userTableAdministradores">
                             <?php foreach ($users as $user): ?>
                                 <?php if ($user['id_rol'] == 1): ?>
                                     <tr>
@@ -179,7 +148,6 @@ function getRoleName($id_rol) {
                                         <td><?php echo !empty($user['nombre']) ? htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8') : 'N/A'; ?></td>
                                         <td><?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td><?php echo getRoleName($user['id_rol']); ?></td>
-                                        <td><?php echo htmlspecialchars($user['estatus_cuenta'], ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td>
                                             <button class="btn btn-primary btn-sm edit-btn" 
                                                 data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" 
@@ -188,14 +156,6 @@ function getRoleName($id_rol) {
                                                 data-role="<?php echo htmlspecialchars($user['id_rol'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
                                             <button class="btn btn-danger btn-sm delete-btn" 
                                                 data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Eliminar</button>
-                                            <form method="post" style="display:inline;">
-                                                <input type="hidden" name="id_usuario" value="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">
-                                                <?php if ($user['estatus_cuenta'] == 'Activo'): ?>
-                                                    <button type="submit" name="suspender" class="btn btn-warning btn-sm">Suspender</button>
-                                                <?php else: ?>
-                                                    <button type="submit" name="activar" class="btn btn-success btn-sm">Activar</button>
-                                                <?php endif; ?>
-                                            </form>
                                         </td>
                                     </tr>
                                 <?php endif; ?>
@@ -221,7 +181,7 @@ function getRoleName($id_rol) {
                             </button>
                         </div>
                         <div class="modal-body">
-                            <iframe src="../mecanicas/solicitud.php" width="100%" height="400px" frameborder="0"></iframe>
+                            <iframe src="../mecanicas/solicitudes.php" width="100%" height="400px" frameborder="0"></iframe>
                         </div>
                     </div>
                 </div>
@@ -261,6 +221,9 @@ function getRoleName($id_rol) {
                                     <label for="add-role">Rol</label>
                                     <select class="form-control" id="add-role" name="id_rol" required>
                                         <option value="1">Administrador</option>
+                                        <option value="2">Coordinador</option>
+                                        <option value="3">Beneficiario</option>
+                                        <option value="4">Voluntario</option>
                                         <option value="5">Donador</option>
                                     </select>
                                 </div>
@@ -291,6 +254,16 @@ function getRoleName($id_rol) {
                                 <div class="form-group">
                                     <label for="edit-email">Email</label>
                                     <input type="email" class="form-control" id="edit-email" name="email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="edit-role">Rol</label>
+                                    <select class="form-control" id="edit-role" name="id_rol">
+                                        <option value="1">Administrador</option>
+                                        <option value="2">Coordinador</option>
+                                        <option value="3">Beneficiario</option>
+                                        <option value="4">Voluntario</option>
+                                        <option value="5">Donador</option>
+                                    </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                             </form>

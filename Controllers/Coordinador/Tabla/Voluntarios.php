@@ -9,50 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 include '../../../DB/db.php'; // Incluye la conexión a la base de datos
 
-// Función para suspender una cuenta
-function suspenderCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Suspendido' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        return json_encode(["status" => "error", "message" => "Error preparing statement: {$conn->error}"]);
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        return json_encode(["status" => "error", "message" => "Error executing statement: {$stmt->error}"]);
-    }
-    $stmt->close();
-    return json_encode(["status" => "success"]);
-}
-
-// Función para activar una cuenta
-function activarCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Activo' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        return json_encode(["status" => "error", "message" => "Error preparing statement: {$conn->error}"]);
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        return json_encode(["status" => "error", "message" => "Error executing statement: {$stmt->error}"]);
-    }
-    $stmt->close();
-    return json_encode(["status" => "success"]);
-}
-
-// Manejar solicitudes AJAX
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'];
-    $id_usuario = $_POST['id_usuario'];
-    if ($action === 'suspender') {
-        echo suspenderCuenta($id_usuario);
-    } elseif ($action === 'activar') {
-        echo activarCuenta($id_usuario);
-    }
-    exit();
-}
-
 // Obtener lista de usuarios
 $sql = "SELECT * FROM users"; // Se define la consulta SQL para obtener todos los usuarios
 $result = $conn->query($sql); // Ejecuta la consulta y guarda el resultado
@@ -84,7 +40,6 @@ function getRoleName($id_rol) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -105,7 +60,6 @@ function getRoleName($id_rol) {
             margin-bottom: 20px;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -155,14 +109,22 @@ function getRoleName($id_rol) {
 
                 <!-- Tabla para Voluntarios -->
                 <div class="card">
-                    <div class="card-header">
-                        Voluntarios
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Voluntarios</span>
+                        <!-- Botón de Solicitudes -->
+                        <button id="btnSolicitudesVoluntarios" class="btn btn-warning btn-sm position-relative">
+                            <i class="fas fa-bell"></i> <!-- Icono de campana para solicitudes -->
+                            <span id="contadorSolicitudesVoluntarios" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                0 <!-- Valor inicial del contador -->
+                            </span>
+                        </button>
                     </div>
                     <div class="card-body">
                         <!-- Barra de búsqueda -->
                         <div class="form-group">
                             <input type="text" id="searchInputVoluntarios" class="form-control" placeholder="Buscar usuarios...">
                         </div>
+                        
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -170,7 +132,6 @@ function getRoleName($id_rol) {
                                     <th>Nombre</th>
                                     <th>Email</th>
                                     <th>Rol</th>
-                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -182,14 +143,14 @@ function getRoleName($id_rol) {
                                             <td><?php echo !empty($user['nombre']) ? htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8') : 'N/A'; ?></td>
                                             <td><?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td><?php echo getRoleName($user['id_rol']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['estatus_cuenta'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td>
+                                                <button class="btn btn-primary btn-sm edit-btn" 
+                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                                    data-name="<?php echo htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                                    data-email="<?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                                    data-role="<?php echo htmlspecialchars($user['id_rol'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
                                                 <button class="btn btn-danger btn-sm delete-btn" 
                                                     data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Eliminar</button>
-                                                <button class="btn btn-warning btn-sm suspend-btn" 
-                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Suspender</button>
-                                                <button class="btn btn-success btn-sm activate-btn" 
-                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Activar</button>
                                             </td>
                                         </tr>
                                     <?php endif; ?>
@@ -198,56 +159,43 @@ function getRoleName($id_rol) {
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <script>
-                    // Script para filtrar usuarios en la tabla de Voluntarios
-                    document.getElementById('searchInputVoluntarios').addEventListener('keyup', function() {
-                        var input = this.value.toLowerCase();
-                        var rows = document.querySelectorAll('#userTableVoluntarios tr');
-                        rows.forEach(function(row) {
-                            var name = row.cells[1].textContent.toLowerCase();
-                            var email = row.cells[2].textContent.toLowerCase();
-                            row.style.display = (name.includes(input) || email.includes(input)) ? '' : 'none';
-                        });
-                    });
-
-                    // Script para suspender cuenta
-                    $('.suspend-btn').on('click', function() {
-                        var id = $(this).data('id');
-                        $.ajax({
-                            type: 'POST',
-                            url: 'Voluntarios.php',
-                            data: { action: 'suspender', id_usuario: id },
-                            success: function(response) {
-                                var res = JSON.parse(response);
-                                if (res.status === 'success') {
-                                    location.reload();
-                                } else {
-                                    alert(res.message);
-                                }
-                            }
-                        });
-                    });
-
-                    // Script para activar cuenta
-                    $('.activate-btn').on('click', function() {
-                        var id = $(this).data('id');
-                        $.ajax({
-                            type: 'POST',
-                            url: 'Voluntarios.php',
-                            data: { action: 'activar', id_usuario: id },
-                            success: function(response) {
-                                var res = JSON.parse(response);
-                                if (res.status === 'success') {
-                                    location.reload();
-                                } else {
-                                    alert(res.message);
-                                }
-                            }
-                        });
-                    });
-                </script>
-
+    <!-- Modal para editar usuario -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Editar Usuario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" action="mecanicas/edit_user.php" method="POST">
+                        <input type="hidden" id="edit-id" name="id">
+                        <div class="form-group">
+                            <label for="edit-name">Nombre</label>
+                            <input type="text" class="form-control" id="edit-name" name="nombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-email">Email</label>
+                            <input type="email" class="form-control" id="edit-email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-role">Rol</label>
+                            <select class="form-control" id="edit-role" name="id_rol">
+                                <option value="2">Coordinador</option>
+                                <option value="3">Beneficiario</option>
+                                <option value="4">Voluntario</option>
+                                <option value="5">Donador</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -267,21 +215,54 @@ function getRoleName($id_rol) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Eliminar</a>
+                    <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
-        // Script para confirmar eliminación
+        // Script para pasar los datos al modal de edición
+        $('.edit-btn').on('click', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            var email = $(this).data('email');
+            var role = $(this).data('role');
+
+            $('#edit-id').val(id);
+            $('#edit-name').val(name);
+            $('#edit-email').val(email);
+            $('#edit-role').val(role);
+
+            $('#editModal').modal('show'); // Muestra el modal
+        });
+
+        // Script para pasar el ID al modal de confirmación de eliminación
         $('.delete-btn').on('click', function() {
             var id = $(this).data('id');
-            $('#confirmDeleteBtn').attr('href', '../mecanicas/delete_user.php?id=' + id);
-            $('#deleteModal').modal('show'); // Muestra el modal de confirmación
+            $('#confirmDeleteBtn').attr('href', 'mecanicas/delete_user.php?id=' + id);
+            $('#deleteModal').modal('show'); // Muestra el modal
+        });
+
+        // Simulación del número de solicitudes (esto puede venir de una consulta a la base de datos)
+        const solicitudesPendientesVoluntarios = 3; // Ejemplo: número de solicitudes
+
+        // Actualiza el contador de solicitudes en el botón
+        document.getElementById('contadorSolicitudesVoluntarios').textContent = solicitudesPendientesVoluntarios;
+
+        // Script para filtrar usuarios en la tabla de Voluntarios
+        document.getElementById('searchInputVoluntarios').addEventListener('keyup', function() {
+            var input = this.value.toLowerCase();
+            var rows = document.querySelectorAll('#userTableVoluntarios tr');
+            rows.forEach(function(row) {
+                var name = row.cells[1].textContent.toLowerCase();
+                var email = row.cells[2].textContent.toLowerCase();
+                row.style.display = (name.includes(input) || email.includes(input)) ? '' : 'none';
+            });
         });
     </script>
 </body>

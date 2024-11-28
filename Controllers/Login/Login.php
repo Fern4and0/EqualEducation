@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Verificamos si la solicitud es de
                         header("Location: ../Coordinador/Cordi-Dashboard.php");
                         break;
                     case 3: // Beneficiario
-                        header("Location: ../Beneficiario/Beneficiario-Dashboard.php");
+                        header("Location: ../Beneficiario/navbar.php");
                         break;
                     case 4: // Voluntario
                         header("Location: ../Voluntario/Voluntario-Dashboard.php");

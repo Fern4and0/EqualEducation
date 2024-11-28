@@ -1,3 +1,9 @@
+<?php
+// Verifica si el usuario ya tiene una sesión activa
+session_start();
+$is_logged_in = isset($_SESSION['user_id']) ? true : false;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,7 +78,7 @@
     </script>
 </head>
 <body>
-    <div class="container" id="container">
+<div class="container" id="container" data-logged-in="<?php echo $is_logged_in ? 'true' : 'false'; ?>">
         <div class="form-container sign-up-container">
             <form method="post" action="../../Controllers/Login/Registro.php" id="formularioRegistro">
                 <h1>Crear cuenta</h1>
@@ -91,7 +97,7 @@
                 <a href="#" class="forgot">Términos y condiciones</a>
                 <button type="submit">Registrarse</button>
             </form>
-        </div>
+        </div>  
         <div class="form-container sign-in-container">
             <form method="post" action="../../Controllers/Login/Login.php">
                 <h1>Iniciar sesión</h1>
@@ -134,6 +140,33 @@
         </div>
     </div>
 
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Verifica si el usuario está registrado
+        const container = document.getElementById("container");
+        const isLoggedIn = container.dataset.loggedIn === "true";
+
+        if (isLoggedIn) {
+            // Selecciona todos los inputs y botones del formulario de registro
+            const formInputs = document.querySelectorAll("#formularioRegistro input, #formularioRegistro button");
+
+            // Desactiva los inputs y botones
+            formInputs.forEach(input => {
+                input.disabled = true;
+
+                // Añade un evento para mostrar el mensaje cuando se intente interactuar
+                input.addEventListener("click", () => {
+                    alert("Ya estás registrado. Por favor, inicia sesión.");
+                });
+            });
+
+            // Opcional: Cambiar el estilo del formulario para indicar que está desactivado
+            const form = document.getElementById("formularioRegistro");
+            form.style.opacity = "0.5"; // Hace que el formulario se vea desactivado
+            form.style.pointerEvents = "none"; // Evita cualquier interacción
+        }
+    });
+    </script>
     <script>
         const container = document.getElementById('container');
         const overlayCon = document.getElementById('overlayCon');

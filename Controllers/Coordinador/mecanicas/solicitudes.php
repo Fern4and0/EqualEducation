@@ -1,179 +1,75 @@
 <?php
-// Conexión a la base de datos (ajusta los datos de conexión)
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ong";
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+header('Content-Type: application/json');
 
-// Verificar conexión
-if ($conn->connect_error) {
-    die("Connection failed: {$conn->connect_error}");
+// Incluir el archivo de conexión a la base de datos
+include '../../../DB/db.php'; // Incluye la conexión a la base de datos
+
+$response = [];
+
+// Verificar si la solicitud es de tipo POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(["status" => "error", "message" => "Tipo de solicitud no válido."]);
+    exit;
 }
 
-// Función para suspender una cuenta
-function suspenderCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Suspendido' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        die("Error preparing statement: {$conn->error}");
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        die("Error executing statement: {$stmt->error}");
-    }
-    $stmt->close();
-}
-// Función para activar una cuenta
-function activarCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Activo' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        die("Error preparing statement: " . $conn->error);
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        die("Error executing statement: " . $stmt->error);
-    }
-    $stmt->close();
+// Debugging: Write the contents of $_POST to a file
+file_put_contents('debug.txt', print_r($_POST, true));
+
+// Obtener los datos del formulario
+$id_users = $_POST['id_users'] ?? '';
+$nombre = $_POST['nombre'] ?? '';
+$motivacion = $_POST['motivacion'] ?? '';
+$fecha_nacimiento = $_POST['fecha_nacimiento'] ?? '';
+$direccion = $_POST['direccion'] ?? '';
+$nivel_edu = $_POST['nivel_edu'] ?? '';
+$situacion_eco = $_POST['situacion_eco'] ?? '';
+$fecha_de_ingr = $_POST['fecha_de_ingr'] ?? '';
+
+// Validar los datos
+if (empty($_POST['nombre']) || empty($_POST['fecha_nacimiento']) || empty($_POST['direccion'])) {
+    echo json_encode(["status" => "error", "message" => "Por favor completa todos los campos obligatorios."]);
+    exit;
 }
 
-// Función para obtener todos los usuarios
-function obtenerUsuarios() {
-    global $conn;
-    $sql = "SELECT * FROM users";
-    $result = $conn->query($sql);
-    return $result;
+// Verificar el tipo de solicitud
+if (isset($_POST['ingresos_mensuales']) && !isset($_POST['ocupacion'])) {
+    // Solicitud de Beneficiario
+    $ingresos_mensuales = $_POST['ingresos_mensuales'];
+    $query = "INSERT INTO beneficiarios (id_users, nombre, ingresos_mensuales, motivacion, fecha_nacimiento, direccion, nivel_edu, situacion_eco, fecha_de_ingr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("issdsssss", $id_users, $nombre, $ingresos_mensuales, $motivacion, $fecha_nacimiento, $direccion, $nivel_edu, $situacion_eco, $fecha_de_ingr);
+} elseif (isset($_POST['ocupacion']) && !isset($_POST['ingresos_mensuales'])) {
+    // Solicitud de Voluntario
+    $ocupacion = $_POST['ocupacion'];
+    $query = "INSERT INTO voluntarios (id_users, nombre, ocupacion, motivacion, fecha_nacimiento, direccion, nivel_edu, situacion_eco, fecha_de_ingr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("issssssss", $id_users, $nombre, $ocupacion, $motivacion, $fecha_nacimiento, $direccion, $nivel_edu, $situacion_eco, $fecha_de_ingr);
+} elseif (isset($_POST['ingresos_mensuales']) && isset($_POST['ocupacion'])) {
+    $response['status'] = 'error';
+    $response['message'] = 'No se puede enviar ambos tipos de solicitud a la vez.';
+    echo json_encode($response);
+    exit();
+} else {
+    $response['status'] = 'error';
+    $response['message'] = 'Tipo de solicitud no válido.';
+    echo json_encode($response);
+    exit();
 }
 
-// Obtener los usuarios
-$usuarios = obtenerUsuarios();
+// Ejecutar la consulta
+if ($stmt->execute()) {
+    $response['status'] = 'success';
+    $response['message'] = 'Solicitud enviada exitosamente.';
+    echo json_encode($response);
+    exit();
+} else {
+    $response['status'] = 'error';
+    $response['message'] = "Error al enviar la solicitud: {$stmt->error}";
+    echo json_encode($response);
+}
+
+// Cerrar la declaración y la conexión
+$stmt->close();
+$conn->close();
 ?>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listado de Usuarios</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-        }
-        th {
-            background-color: #007bff;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:nth-child(odd) {
-            background-color: #fff;
-        }
-        tr:hover {
-            background-color: #e9ecef;
-        }
-        button {
-            padding: 8px 12px;
-            margin: 2px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, opacity 0.3s ease;
-        }
-        button[name="suspender"] {
-            background-color: #dc3545;
-            color: white;
-        }
-        button[name="activar"] {
-            background-color: #28a745;
-            color: white;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        form {
-            display: inline;
-        }
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .title {
-            text-align: center;
-            font-size: 24px;
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <?php
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if (isset($_POST['suspender'])) {
-            suspenderCuenta($_POST['id_usuario']);
-        } elseif (isset($_POST['activar'])) {
-            activarCuenta($_POST['id_usuario']);
-        }
-        // Refresh the page to reflect changes
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    }
-    ?>
-
-    <div class="container">
-        <div class="title">Listado de Usuarios</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $usuarios->fetch_assoc()): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($row['id']); ?></td>
-                        <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                        <td><?php echo htmlspecialchars($row['email']); ?></td>
-                        <td><?php echo htmlspecialchars($row['estatus_cuenta']); ?></td>
-                        <td>
-                            <form method="post">
-                                <input type="hidden" name="id_usuario" value="<?php echo htmlspecialchars($row['id']); ?>">
-                                <button type="submit" name="suspender">Suspender</button>
-                                <button type="submit" name="activar">Activar</button>
-                            </form>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
-</body>
-</html>

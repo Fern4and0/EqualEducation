@@ -9,20 +9,34 @@ if (!isset($_SESSION['user_id'])) {
 
 include '../../DB/db.php'; // Incluye la conexión a la base de datos
 
-// Consulta para obtener el total de usuarios registrados
-$sqlUsuarios = "SELECT COUNT(*) AS total_usuarios FROM users";
-$resultUsuarios = $conn->query($sqlUsuarios); // Ejecuta la consulta
-$totalUsuarios = $resultUsuarios->fetch_assoc()['total_usuarios']; // Obtiene el resultado de la consulta
-
 // Consulta para obtener las donaciones totales
-$sqlDonaciones = "SELECT COALESCE(SUM(monto), 0) AS total_donaciones FROM donaciones";
-$resultDonaciones = $conn->query($sqlDonaciones); // Ejecuta la consulta
-$totalDonaciones = $resultDonaciones->fetch_assoc()['total_donaciones']; // Obtiene el resultado de la consulta
+$sqlIngresos = "SELECT COALESCE(SUM(monto), 0) AS total_ingresos FROM donaciones";
+$resultIngresos = $conn->query($sqlIngresos); // Ejecuta la consulta
+$totalIngresos = $resultIngresos->fetch_assoc()['total_ingresos']; // Obtiene el resultado de la consulta
+$sqlIngresosSemana = "SELECT COALESCE(SUM(monto), 0) AS total_ingresossem FROM donaciones WHERE created_at >= '2024-11-20' and created_at <= '2024-11-27'";
+$resultIngresosSemana = $conn->query($sqlIngresosSemana); // Ejecuta la consulta
+$totalIngresosSemana = $resultIngresosSemana->fetch_assoc()['total_ingresossem']; // Obtiene el resultado de la consulta
 
-// Consulta para obtener la cantidad de beneficiarios registrados
-$sqlBeneficiarios = "SELECT COUNT(*) AS total_beneficiarios FROM beneficiarios";
-$resultBeneficiarios = $conn->query($sqlBeneficiarios); // Ejecuta la consulta
-$totalBeneficiarios = $resultBeneficiarios->fetch_assoc()['total_beneficiarios']; // Obtiene el resultado de la consulta
+
+$sqlDonantes = "SELECT COUNT(DISTINCT donante_id) as nuevos_donantes FROM donaciones";
+$resultDonantes = $conn->query($sqlDonantes); // Ejecuta la consulta
+$nuevosDonantes = $resultDonantes->fetch_assoc()['nuevos_donantes'];
+$sqlDonantesSemana = "SELECT COUNT(DISTINCT donante_id) as nuevos_donantessem FROM donaciones WHERE created_at >= '2024-11-20' and created_at <= '2024-11-27'";
+$resultDonantesSemana = $conn->query($sqlDonantesSemana); // Ejecuta la consulta
+$nuevosDonantesSemana = $resultDonantesSemana->fetch_assoc()['nuevos_donantessem'];
+
+$sqlDonaciones = "SELECT COUNT(monto) as nuevas_donaciones FROM donaciones";
+$resultDonaciones = $conn->query($sqlDonaciones); // Ejecuta la consulta
+$nuevasDonaciones = $resultDonaciones->fetch_assoc()['nuevas_donaciones'];
+$sqlDonacionesSemana = "SELECT COUNT(monto) as nuevas_donacionessem FROM donaciones WHERE created_at >= '2024-11-20' and created_at <= '2024-11-27'";
+$resultDonacionesSemana = $conn->query($sqlDonacionesSemana); // Ejecuta la consulta
+$nuevasDonacionesSemana = $resultDonacionesSemana->fetch_assoc()['nuevas_donacionessem'];
+
+
+$sqlTabla = "SELECT nombre_usuario, monto_donacion, fecha_donacion FROM vista_donaciones_usuarios";
+$consultaTabla = $conn->query($sqlTabla);
+
+
 
 // Cerrar la conexión a la base de datos
 $conn->close(); // Cierra la conexión a la base de datos
@@ -34,9 +48,14 @@ $conn->close(); // Cierra la conexión a la base de datos
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrador Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../../Resources/css/styles_donacionesDB.css">
     <style>
         body {
             background-color: #f8f9fa;
@@ -95,11 +114,204 @@ $conn->close(); // Cierra la conexión a la base de datos
             </ul>
         </div>
     </nav>
+    
+    <main class="content">
+    <div class="container-fluid p-0">
+        <h1 class="h3 mb-3"><strong>Registro de donaciones y gastos</strong></h1>
 
-    <div class="container">
-       
+        <div class="row">
+            <!-- Mitad izquierda -->
+            <div class="col-md-6">
+                <!-- Tarjetas -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col mt-0">
+                                        <h5 class="card-title">Gastos</h5>
+                                    </div>
+                                </div>
+                                <h1 class="mt-1 mb-3">$0.00</h1>
+                                <div class="mb-0">
+                                    <span class="text-success">0%</span>
+                                    <span class="text-muted">Durante la última semana</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col mt-0">
+                                        <h5 class="card-title">Donadores</h5>
+                                    </div>
+                                </div>
+                                <h1 class="mt-1 mb-3"><?php echo $nuevosDonantes; ?></h1>
+                                <div class="mb-0">
+                                    <span class="text-success">+<?php echo $nuevosDonantesSemana; ?></span>
+                                    <span class="text-muted">Durante la última semana</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col mt-0">
+                                        <h5 class="card-title">Donaciones</h5>
+                                    </div>
+                                </div>
+                                <h1 class="mt-1 mb-3">$<?php echo $totalIngresos; ?></h1>
+                                <div class="mb-0">
+                                    <span class="text-success">+$<?php echo $totalIngresosSemana; ?></span>
+                                    <span class="text-muted">Durante la última semana</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col mt-0">
+                                        <h5 class="card-title">Num. Donaciones</h5>
+                                    </div>
+                                </div>
+                                <h1 class="mt-1 mb-3"><?php echo $nuevasDonaciones; ?></h1>
+                                <div class="mb-0">
+                                    <span class="text-success">+<?php echo $nuevasDonacionesSemana; ?></span>
+                                    <span class="text-muted">Durante la última semana</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla -->
+                <div class="card flex-fill w-100 mt-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Donaciones</h5>
+                    </div>
+                    <table class="table table-hover my-0">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th class="d-none d-xl-table-cell">Monto</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <?php
+                                if ($consultaTabla->num_rows > 0) {
+                                    while ($row = $consultaTabla->fetch_assoc()) {
+                                        echo '
+                                        <td>' . $row["nombre_usuario"] . '</td>
+                                        <td><span class="badge bg-success">$' . $row["monto_donacion"] . '</span></td>
+                                        <td class="d-none d-md-table-cell">' . $row["fecha_donacion"] . '</td>';
+                                    }
+                                }
+                                ?>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Mitad derecha -->
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Ingresos en los ultimos meses</h5>
+                                <canvas id="lineChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Nuevos donantes en los ultimos meses</h5>
+                                <canvas id="barChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</main>
 
+
+    <script>
+        // Obtener el contexto del lienzo donde se dibujará la gráfica
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        // Crear la gráfica
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'], // Etiquetas
+                datasets: [{
+                    label: 'Ingresos',
+                    data: [500,300,800,100,0,<?php echo $totalIngresos;?>], // Datos aleatorios
+                    backgroundColor: 'rgba(50, 245, 40, 0.1)',
+                    borderColor: 'rgba(50, 245, 40, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(50, 245, 40, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Obtener el contexto del lienzo donde se dibujará la gráfica
+        const ctx2 = document.getElementById('barChart').getContext('2d');
+        // Crear la gráfica
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'], // Etiquetas
+                datasets: [{
+                    label: 'Nuevos donantes',
+                    data: [100,50,60,80,20,<?php echo $nuevosDonantes;?>], // Datos aleatorios
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+   
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

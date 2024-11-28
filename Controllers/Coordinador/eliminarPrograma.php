@@ -8,7 +8,7 @@ $programaid = $_POST["id"];
 $user_id = $_POST["user_id"];
 
 // Preparar la consulta SQL para insertar datos
-$sql = "DELETE FROM programas WHERE id = $programaid AND user_id = $user_id";
+$sql = "DELETE FROM programas WHERE id = $programaid";
 
 // Ejecutar la consulta
 if ($conn->query($sql) === TRUE) {

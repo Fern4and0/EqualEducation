@@ -9,51 +9,6 @@ if (!isset($_SESSION['user_id'])) {
 
 include '../../../DB/db.php'; // Incluye la conexión a la base de datos
 
-// Función para suspender una cuenta
-function suspenderCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Suspendido' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        die("Error preparing statement: {$conn->error}");
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        die("Error executing statement: {$stmt->error}");
-    }
-    $stmt->close();
-}
-
-// Función para activar una cuenta
-function activarCuenta($id_usuario) {
-    global $conn;
-    $sql = "UPDATE users SET estatus_cuenta='Activo' WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt === false) {
-        die("Error preparing statement: " . $conn->error);
-    }
-    $stmt->bind_param("i", $id_usuario);
-    if (!$stmt->execute()) {
-        die("Error executing statement: " . $stmt->error);
-    }
-    $stmt->close();
-}
-
-// Manejar solicitudes AJAX
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'];
-    $id_usuario = $_POST['id_usuario'];
-
-    if ($action === 'suspender') {
-        suspenderCuenta($id_usuario);
-    } elseif ($action === 'activar') {
-        activarCuenta($id_usuario);
-    }
-
-    echo json_encode(['status' => 'success']);
-    exit();
-}
-
 // Obtener lista de usuarios
 $sql = "SELECT * FROM users"; // Se define la consulta SQL para obtener todos los usuarios
 $result = $conn->query($sql); // Ejecuta la consulta y guarda el resultado
@@ -145,6 +100,7 @@ function getRoleName($id_rol) {
         </div>
     </nav>
 
+
     <div class="container"> 
         <div class="row">
             <div class="col-md-12">
@@ -152,14 +108,22 @@ function getRoleName($id_rol) {
 
                 <!-- Tabla para Beneficiarios -->
                 <div class="card">
-                    <div class="card-header">
-                        Beneficiarios
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Beneficiarios</span>
+                        <!-- Botón de Solicitudes -->
+                        <button id="btnSolicitudes" class="btn btn-warning btn-sm position-relative">
+                            <i class="fas fa-bell"></i> <!-- Icono de campana para solicitudes -->
+                            <span id="contadorSolicitudes" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                0 <!-- Valor inicial del contador -->
+                            </span>
+                        </button>
                     </div>
                     <div class="card-body">
                         <!-- Barra de búsqueda -->
                         <div class="form-group">
                             <input type="text" id="searchInputBeneficiarios" class="form-control" placeholder="Buscar usuarios...">
                         </div>
+                        
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -167,7 +131,6 @@ function getRoleName($id_rol) {
                                     <th>Nombre</th>
                                     <th>Email</th>
                                     <th>Rol</th>
-                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -179,14 +142,13 @@ function getRoleName($id_rol) {
                                             <td><?php echo !empty($user['nombre']) ? htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8') : 'N/A'; ?></td>
                                             <td><?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td><?php echo getRoleName($user['id_rol']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['estatus_cuenta'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td>
-                                                <button class="btn btn-danger btn-sm delete-btn" 
-                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Eliminar</button>
-                                                <button class="btn btn-warning btn-sm suspend-btn" 
-                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Suspender</button>
-                                                <button class="btn btn-success btn-sm activate-btn" 
-                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Activar</button>
+                                                <button class="btn btn-primary btn-sm edit-btn" 
+                                                    data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                                    data-name="<?php echo htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                                    data-email="<?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                                    data-role="<?php echo htmlspecialchars($user['id_rol'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
+                                                <a href="../mecanicas/delete_user.php?id=<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" class="btn btn-danger btn-sm delete-btn">Eliminar</a>
                                             </td>
                                         </tr>
                                     <?php endif; ?>
@@ -195,47 +157,65 @@ function getRoleName($id_rol) {
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <script>
-                    // Script para filtrar usuarios en la tabla de Beneficiarios
-                    document.getElementById('searchInputBeneficiarios').addEventListener('keyup', function() {
-                        var input = this.value.toLowerCase();
-                        var rows = document.querySelectorAll('#userTableBeneficiarios tr');
-                        rows.forEach(function(row) {
-                            var name = row.cells[1].textContent.toLowerCase();
-                            var email = row.cells[2].textContent.toLowerCase();
-                            row.style.display = (name.includes(input) || email.includes(input)) ? '' : 'none';
-                        });
-                    });
+    <!-- Modal para mostrar solicitudes -->
+    <div class="modal fade" id="solicitudesModal" tabindex="-1" role="dialog" aria-labelledby="solicitudesModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="solicitudesModalLabel">Solicitudes</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul id="solicitudesList" class="list-group">
+                        <!-- Las solicitudes se cargarán aquí -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    // Script para manejar la suspensión y activación de cuentas
-                    document.querySelectorAll('.suspend-btn, .activate-btn').forEach(function(button) {
-                        button.addEventListener('click', function() {
-                            var id = this.dataset.id;
-                            var action = this.classList.contains('suspend-btn') ? 'suspender' : 'activar';
-
-                            fetch('', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                },
-                                body: new URLSearchParams({
-                                    action: action,
-                                    id_usuario: id
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status === 'success') {
-                                    location.reload(); // Recarga la página para reflejar los cambios
-                                } else {
-                                    alert('Error al actualizar el estado de la cuenta.');
-                                }
-                            });
-                        });
-                    });
-                </script>
-
+    <!-- Modal para editar usuario -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Editar Usuario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" action="mecanicas/edit_user.php" method="POST">
+                        <input type="hidden" id="edit-id" name="id">
+                        <div class="form-group">
+                            <label for="edit-name">Nombre</label>
+                            <input type="text" class="form-control" id="edit-name" name="nombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-email">Email</label>
+                            <input type="email" class="form-control" id="edit-email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-role">Rol</label>
+                            <select class="form-control" id="edit-role" name="id_rol">
+                                <option value="2">Coordinador</option>
+                                <option value="3">Beneficiario</option>
+                                <option value="4">Voluntario</option>
+                                <option value="5">Donador</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -255,20 +235,98 @@ function getRoleName($id_rol) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <a id="confirmDeleteBtn" href="../mecanicas/delete_user.php" class="btn btn-danger">Eliminar</a>
+                    <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</a>
                 </div>
             </div>
         </div>
     </div>
 
+    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
+        // Función para actualizar el contador de solicitudes
+        function actualizarContadorSolicitudes() {
+            fetch('../mecanicas/solicitudes.php')
+                .then(response => response.json())
+                .then(data => {
+                    const contadorSolicitudes = data.solicitudes || 0; // Si no hay valor, usa 0 como predeterminado
+                    document.getElementById('contadorSolicitudes').textContent = contadorSolicitudes;
+                })
+                .catch(error => console.error('Error al obtener el conteo de solicitudes:', error));
+        }
+
+        // Llama a la función para actualizar el contador de solicitudes al cargar la página
+        document.addEventListener('DOMContentLoaded', actualizarContadorSolicitudes);
+
+        // Opcional: refresca el contador cada cierto tiempo, por ejemplo, cada 30 segundos
+        setInterval(actualizarContadorSolicitudes, 30000);
+
+        // Función para cargar las solicitudes en el modal
+        function cargarSolicitudes() {
+            fetch('../mecanicas/solicitudes.php')
+                .then(response => response.json())
+                .then(data => {
+                    const solicitudesList = document.getElementById('solicitudesList');
+                    solicitudesList.innerHTML = ''; // Limpiar la lista antes de agregar nuevas solicitudes
+
+                    if (data && data.solicitudes && Array.isArray(data.solicitudes)) {
+                        data.solicitudes.forEach(solicitud => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'list-group-item';
+                            listItem.textContent = solicitud.descripcion;
+                            solicitudesList.appendChild(listItem);
+                        });
+                    } else {
+                        // Muestra un mensaje en el modal si no hay solicitudes
+                        const listItem = document.createElement('li');
+                        listItem.className = 'list-group-item text-muted';
+                        listItem.textContent = 'No hay solicitudes disponibles';
+                        solicitudesList.appendChild(listItem);
+                        console.error('La respuesta no contiene el campo "solicitudes" o no es un array.');
+                    }
+                })
+                .catch(error => console.error('Error al cargar las solicitudes:', error));
+        }
+
+
+        // Mostrar el modal de solicitudes al hacer clic en el botón
+        document.getElementById('btnSolicitudes').addEventListener('click', function() {
+            cargarSolicitudes();
+            $('#solicitudesModal').modal('show');
+        });
+
+        // Script para filtrar usuarios en la tabla de Beneficiarios
+        document.getElementById('searchInputBeneficiarios').addEventListener('keyup', function() {
+            var input = this.value.toLowerCase();
+            var rows = document.querySelectorAll('#userTableBeneficiarios tr');
+            rows.forEach(function(row) {
+                var name = row.cells[1].textContent.toLowerCase();
+                var email = row.cells[2].textContent.toLowerCase();
+                row.style.display = (name.includes(input) || email.includes(input)) ? '' : 'none';
+            });
+        });
+
+        // Script para pasar los datos al modal de edición
+        $('.edit-btn').on('click', function() {
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            var email = $(this).data('email');
+            var role = $(this).data('role');
+
+            $('#edit-id').val(id);
+            $('#edit-name').val(name);
+            $('#edit-email').val(email);
+            $('#edit-role').val(role);
+
+            $('#editModal').modal('show'); // Muestra el modal
+        });
+
         // Script para pasar el ID al modal de confirmación de eliminación
         $('.delete-btn').on('click', function() {
             var id = $(this).data('id');
-            $('#confirmDeleteBtn').attr('href', '../mecanicas/delete_user.php?id=' + id);
+            $('#confirmDeleteBtn').attr('href', 'mecanicas/delete_user.php?id=' + id);
             $('#deleteModal').modal('show'); // Muestra el modal
         });
     </script>
