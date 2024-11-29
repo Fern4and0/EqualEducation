@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,8 +16,24 @@
     <style>.ie-panel{display: none;background: #212121;padding: 10px 0;box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3);clear: both;text-align:center;position: relative;z-index: 1;} html.ie-10 .ie-panel, html.lt-ie-10 .ie-panel {display: block;}</style>
 </head>
 <body>
-<?php include('header.php');?>
-        </header>
+    <div class="page">
+    <?php include('header.php');
+    include '../../DB/DB.php';
+
+    $user_id = $_SESSION['user_id'];
+    
+    $sql = "SELECT COALESCE(SUM(monto), 0) AS total_donaciones FROM donaciones WHERE donante_id = $user_id";
+    $sqlResult = $conn->query($sql);
+    $totalDonaciones = $sqlResult->fetch_assoc()['total_donaciones'];
+    
+    $sql2 = "SELECT COUNT(id) AS num_donaciones FROM donaciones WHERE donante_id = $user_id";
+    $sqlResult2 = $conn->query($sql2);
+    $numDonaciones = $sqlResult2->fetch_assoc()['num_donaciones'];
+    
+    $sql3 = "SELECT monto, created_at FROM donaciones WHERE donante_id = $user_id";
+    $tabla = $conn->query($sql3);
+    $conn->close();
+    ?>
         <section class="parallax-container" data-parallax-img="../../Public/image/Donations.jpg">
             <div class="parallax-content breadcrumbs-custom context-dark">
               <div class="container">
@@ -49,7 +66,7 @@
                                                     <h5 class="card-title">Total de donaciones</h5>
                                                 </div>
                                             </div>
-                                            <h1 class="mt-1 mb-3">$110.00</h1>
+                                            <span style="font-size: 25px;" class="mt-1 mb-3">$<?php echo $totalDonaciones; ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -62,7 +79,7 @@
                                                     <h5 class="card-title">Num. Donaciones</h5>
                                                 </div>
                                             </div>
-                                            <h1 class="mt-1 mb-3">2</h1>
+                                            <span style="font-size: 25px;" class="mt-1 mb-3"><?php echo $numDonaciones; ?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -96,24 +113,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td><span class="badge bg-success">$20.00</span></td>
-                                        <td class="d-none d-md-table-cell">25/11/2024</td>
-                                    </tr>
-                                </tbody>
-                                <tbody>
-                                    <tr>
-                                        <td><span class="badge bg-success">$10.00</span></td>
-                                        <td class="d-none d-md-table-cell">25/11/2024</td>
-                                    </tr>
-                                </tbody>
-                                <tbody>
-                                    <tr>
-                                        <td><span class="badge bg-success">$100.00</span></td>
-                                        <td class="d-none d-md-table-cell">24/11/2024</td>
-                                    </tr>
+                                    <?php
+                                    if ($tabla->num_rows > 0) {
+                                        while ($row = $tabla->fetch_assoc()) {
+                                            echo '
+                                            <tr>
+                                                <td><span class="badge bg-success">$' . $row["monto"] . '</span></td>
+                                                <td class="d-none d-md-table-cell">' . $row["created_at"] . '</td>
+                                            </tr>';
+                                        }
+                                    } else {
+                                        echo '<tr><td colspan="2">No hay datos disponibles.</td></tr>';
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                     <!-- Grafica Donaciones -->
@@ -145,7 +160,7 @@
               </div>
             </div>
           </footer>
-</div>
+    </div>
     <div class="snackbars" id="form-output-global"></div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -157,7 +172,7 @@
             labels: ['Donaciones'],
             datasets: [{
                 label: 'Monto ($)',
-                data: [110],
+                data: [<?php echo $totalDonaciones; ?>],
                 backgroundColor: ['rgba(153, 102, 255, 0.2)',],
                 borderColor: ['rgba(153, 102, 255, 1)'],
                 borderWidth: 1
@@ -190,7 +205,7 @@
             labels: ['Num. Donaciones'],
             datasets: [{
                 label: 'Número de Donaciones',
-                data: [3],
+                data: [<?php echo $numDonaciones; ?>],
                 backgroundColor: ['rgba(255, 159, 64, 0.2)'],
                 borderColor: ['rgba(255, 159, 64, 1)'],
                 borderWidth: 1

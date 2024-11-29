@@ -1,7 +1,15 @@
 <?php
+
+session_start();
+
 include '../../DB/DB.php';
 
-$sql = "SELECT id, nombre, descripcion ,fecha_ini, fecha_fin, foto FROM programas ORDER BY fecha_ini ASC";
+$user_id = $_SESSION['user_id'];
+
+$fecha_actual = date('Y-m-d');
+echo $fecha_actual;
+
+$sql = "SELECT id, nombre, descripcion ,fecha_ini, fecha_fin, foto, ubicacion, cupo_maximo, tipo FROM programas ORDER BY fecha_ini ASC";
 $consulta = $conn->query($sql);
 
 $conn->close();
@@ -28,8 +36,52 @@ $conn->close();
     </style>
 </head>
 <body>
-    <div class="page">   
-    <?php include('header.php');?>
+<div class="preloader">
+      <div class="preloader-body">
+        <div class="cssload-container">
+          <div class="cssload-speeding-wheel"></div>
+        </div>
+        <p>Loading...</p>
+      </div>
+    </div>
+    <div class="page">
+      <!-- Page Header-->
+      <header class="section page-header">
+        <!-- RD Navbar-->
+        <div class="rd-navbar-wrap">
+          <nav class="rd-navbar rd-navbar-classic" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed" data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed" data-lg-layout="rd-navbar-static" data-lg-device-layout="rd-navbar-static" data-xl-layout="rd-navbar-static" data-xl-device-layout="rd-navbar-static" data-xxl-layout="rd-navbar-static" data-xxl-device-layout="rd-navbar-static" data-lg-stick-up-offset="46px" data-xl-stick-up-offset="46px" data-xxl-stick-up-offset="46px" data-lg-stick-up="true" data-xl-stick-up="true" data-xxl-stick-up="true">
+            <div class="rd-navbar-main-outer">
+              <div class="rd-navbar-main">
+                <!-- RD Navbar Panel-->
+                <div class="rd-navbar-panel">
+                  <!-- RD Navbar Toggle-->
+                  <button class="rd-navbar-toggle" data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
+                  <!-- RD Navbar Brand-->
+                  <div class="rd-navbar-brand"><a href="../views/index.php"><img class="brand-logo-light" src="../Images/logo.png" alt="" width="100" height=""/></a></div>
+                </div>
+                <div class="rd-navbar-main-element">
+                  <div class="rd-navbar-nav-wrap">
+                    <!-- RD Navbar Nav-->
+                    <ul class="rd-navbar-nav">
+                      <li class="rd-nav-item"><a class="rd-nav-link" href="../views/index.php">Inicio</a>
+                      </li>
+                      <li class="rd-nav-item active"><a class="rd-nav-link" href="../views/programas.php">Programas</a>
+                      </li>
+                      <li class="rd-nav-item"><a class="rd-nav-link" href="../views/nosotros.html">Sobre nosotros</a>
+                      </li>
+                      <li class="rd-nav-item"><a class="rd-nav-link" href="../views/Modals.php">Unete</a>
+                      </li>
+                      <li class="rd-nav-item"><a class="rd-nav-link" href="../views/login.html">Iniciar sesión</a>
+                      </li>
+                    </ul><a class="button button-primary button-sm" href="../views/donaciones.php">Donar</a>
+                  </div>
+                </div><a class="button button-primary button-sm" href="../views/donaciones.php">Donar</a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
+
       <section class="parallax-container" data-parallax-img="../../Public/image/img4.jpg">
         <div class="parallax-content breadcrumbs-custom context-dark">
           <div class="container">
@@ -48,6 +100,7 @@ $conn->close();
         <p class="subheader text-center">Participa en nuestros programas educativos gratuitos y abre la puerta a nuevas oportunidades.
             Aprende nuevas habilidades, mejora tu futuro y conéctate con una comunidad de personas que, como tú, buscan superarse.
             ¡Es el momento de invertir en ti mismo, sin costo alguno!</p>
+    </div>
         
 <?php
 if ($consulta->num_rows > 0) {
@@ -68,12 +121,49 @@ if ($consulta->num_rows > 0) {
                     <button 
                         class='show-more' 
                         id='show-more-btn-$id' 
-                        onclick='showModal($id)' 
-                        data-nombre='" . $row["nombre"] . "' 
-                        data-descripcion='" . $row["descripcion"] . "' 
-                        data-fecha-inicio='" . $row["fecha_ini"] . "' 
-                        data-fecha-fin='" . $row["fecha_fin"] . "' 
+                        onclick='showModal($id)'
                     >Ver más...</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id='modal-$id' class='modal'>
+            <div class='modal-content'>
+                <span class='close' onclick='closeModal($id)'>&times;</span>
+                <form action='../../Controllers/unirse.php' method='POST'>
+                <input type='hidden' name='programa_id' value=".$id.">
+                <input type='hidden' name='user_id' value=".$user_id.">
+                <button id='join-button-$id' class='join-button' type='submit'>Unirse</button>
+                </form>
+                <h4 id='modal-nombre-$id' class='modal-header'>" . $row['nombre'] . "</h4>
+                <div class='modal-body'>
+                    <div class='modal-section'>
+                        <strong>Descripción:</strong>
+                        <p id='modal-descripcion-$id'>" . $row['descripcion'] . "</p>
+                    </div>
+                    <div class='modal-section'>
+                        <strong>Fecha de inicio:</strong>
+                        <p id='modal-fecha-inicio-$id'>" . $row['fecha_ini'] . "</p>
+                    </div>
+                    <div class='modal-section'>
+                        <strong>Fecha de vencimiento:</strong>
+                        <p id='modal-fecha-fin-$id'>" . $row['fecha_fin'] . "</p>
+                    </div>
+                    <div class='modal-section'>
+                        <strong>Ubicación:</strong>
+                        <p id='modal-ubicacion-$id'>" . $row['ubicacion'] . "</p>
+                    </div>
+                    <div class='modal-section'>
+                        <strong>Tipo de programa:</strong>
+                        <p id='modal-tipo-$id'>" . $row['tipo'] . "</p>
+                    </div>
+                    <div class='modal-section'>
+                        <strong>Cupo máximo:</strong>
+                        <div class='progress-container'>
+                            <div id='modal-cupo-bar-$id' class='progress-bar'></div>
+                        </div>
+                        <p id='modal-cupo-text-$id'></p>
+                    </div>
                 </div>
             </div>
         </div>";
@@ -82,44 +172,6 @@ if ($consulta->num_rows > 0) {
     echo "<p>No hay programas disponibles</p>";
 }
 ?>
-    </div>
-    <!-- modal -->
-    <div id="modal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <button id="join-button" class="join-button">Unirse</button>
-        <h4 id="modal-nombre" class="modal-header"></h4>
-        <div class="modal-body">
-            <div class="modal-section">
-                <strong>Descripción:</strong>
-                <p id="modal-descripcion"></p>
-            </div>
-            <div class="modal-section">
-                <strong>Fecha de inicio:</strong>
-                <p id="modal-fecha-inicio"></p>
-            </div>
-            <div class="modal-section">
-                <strong>Fecha de vencimiento:</strong>
-                <p id="modal-fecha-fin"></p>
-            </div>
-            <div class="modal-section">
-                <strong>Ubicación:</strong>
-                <p id="modal-ubicacion">No especificada</p>
-            </div>
-            <div class="modal-section">
-                <strong>Tipo de programa:</strong>
-                <p id="modal-tipo">No especificado</p>
-            </div>
-            <div class="modal-section">
-                <strong>Cupo máximo:</strong>
-                <div class="progress-container">
-                    <div id="modal-cupo-bar" class="progress-bar"></div>
-                </div>
-                <p id="modal-cupo-text"></p>
-            </div>
-        </div>
-    </div>
-</div>
 
     <footer class="section footer-minimal context-dark">
         <div class="container wow-outer">
@@ -146,28 +198,10 @@ if ($consulta->num_rows > 0) {
 // Mostrar el modal y actualizar los datos
 // Mostrar el modal y desactivar el scroll del fondo
 function showModal(id) {
-    const modal = document.getElementById('modal');
+    const modal = document.getElementById('modal-' + id);
     modal.style.display = 'block';
-
     // Desactivar el scroll del fondo
     document.body.classList.add('no-scroll');
-
-    // Actualizar el contenido del modal (como antes)
-    const nombre = "Programa de Capacitación";
-    const descripcion = "Este es un programa educativo de formación profesional en distintas áreas.";
-    const fechaInicio = "01 Enero 2024";
-    const fechaFin = "30 Junio 2024";
-    const ubicacion = "Ciudad A, Dirección B";
-    const tipo = "Educativo";
-    const cupoMaximo = 200;
-    const cuposOcupados = 120;
-
-    document.getElementById('modal-nombre').textContent = nombre;
-    document.getElementById('modal-descripcion').textContent = descripcion;
-    document.getElementById('modal-fecha-inicio').textContent = fechaInicio;
-    document.getElementById('modal-fecha-fin').textContent = fechaFin;
-    document.getElementById('modal-ubicacion').textContent = ubicacion;
-    document.getElementById('modal-tipo').textContent = tipo;
 
     const progressBar = document.getElementById('modal-cupo-bar');
     const progressText = document.getElementById('modal-cupo-text');
@@ -178,43 +212,25 @@ function showModal(id) {
 }
 
 // Cerrar el modal y reactivar el scroll del fondo
-function closeModal() {
-    const modal = document.getElementById('modal');
+function closeModal(id) {
+    const modal = document.getElementById('modal-' + id);
     modal.style.display = 'none';
 
     // Reactivar el scroll del fondo
     document.body.classList.remove('no-scroll');
 }
 
-// Detectar clic fuera del modal para cerrarlo
 window.onclick = function (event) {
-    const modal = document.getElementById('modal');
-    if (event.target === modal) {
-        closeModal();
-    }
-};
-</script>
-
-    <script>
-    function toggleText(id) {
-        const featuredText = document.getElementById('featured-text-' + id);
-        const showMoreBtn = document.getElementById('show-more-btn-' + id);
-        const unirse = document.getElementById('unirse-' + id);
-        
-        let isExpanded = featuredText.classList.contains('expanded');
-
-        if (isExpanded) {
-            featuredText.classList.remove('expanded');
-            unirse.style.display = "none";
-            showMoreBtn.textContent = "Mostrar más +";
-        } else {
-            featuredText.classList.add('expanded');
-            unirse.style.display = "inline";
-            showMoreBtn.textContent = "Mostrar menos -";
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach((modal) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
         }
-    }
+    });
+};
 
-    document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
         const featuredPrograms = document.querySelectorAll('.featured-program');
 
         const observer = new IntersectionObserver(entries => {
@@ -232,8 +248,7 @@ window.onclick = function (event) {
             observer.observe(program);
         });
     });
-    </script>
-
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
