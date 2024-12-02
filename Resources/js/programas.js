@@ -90,3 +90,26 @@ function crearAct(id){
         }
     });
 }
+
+function agregarVolun(idAct){
+    const modalVolun = document.getElementById("modal-volun-" + idAct);
+    const openVolun = document.getElementById("open-volun-" + idAct);
+    const closeVolun = document.getElementById("close-volun-" + idAct);
+
+    // Abrir la ventana emergente
+    openVolun.addEventListener("click", () => {
+        modalVolun.style.display = "flex";
+    });
+
+    // Cerrar la ventana emergente
+    closeVolun.addEventListener("click", () => {
+        modalVolun.style.display = "none";
+    });
+
+    // Cerrar la ventana emergente si se hace clic fuera de ella
+    window.addEventListener("click", (event) => {
+        if (event.target === modalVolun) {
+            modalVolun.style.display = "none";
+        }
+    });
+}

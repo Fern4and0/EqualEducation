@@ -3,7 +3,7 @@
 }
 
 /* Estilos para la ventana emergente */
-.modal, .modalEliminar, .modalEditar, .modalAct {
+.modal, .modalEliminar, .modalEditar, .modalAct , .modalVolun{
     display: none; /* Oculta la ventana por defecto */
     position: fixed;
     top: 0;
@@ -13,9 +13,10 @@
     background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro traslúcido */
     justify-content: center;
     align-items: center;
+    z-index: 1050;
 }
 
-.modal-content, .eliminarContent, .editarContent, .actContent{
+.modal-content, .eliminarContent, .editarContent, .actContent, .volunContent{
     position: absolute;
     font-size: 15px;
     background-color: #f4f4f4;
