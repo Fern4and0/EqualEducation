@@ -6,25 +6,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                <a class="nav-link" href="../../Resources/Views/index.php">Inicio</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRoles" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Gestión de Usuarios
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownRoles">
-                        <li><a class="dropdown-item" href="Tabla/Beneficiarios.php">Beneficiarios</a></li>
-                        <li><a class="dropdown-item" href="Tabla/Voluntarios.php">Voluntarios</a></li>
-                    </ul>
+                <a class="nav-link" href="../../Resources/Views/index.php"><i class="bi bi-house-fill" style="margin-right: 5px;"></i>Pagina principal</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="Programas.php">Programas</a>
-                <li class="nav-item">
-                    <a class="nav-link" href="Informes.php">Informes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Donadores.php">Donaciones</a>
-                </li>
+                    <a class="nav-link" href="Cordi-Dashboard.php">Programas</a>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user"></i>
