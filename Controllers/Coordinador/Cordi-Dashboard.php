@@ -28,13 +28,13 @@ $sqlBeneficiarios = "SELECT COUNT(*) AS total_beneficiarios FROM beneficiarios";
 $resultBeneficiarios = $conn->query($sqlBeneficiarios); // Ejecuta la consulta
 $totalBeneficiarios = $resultBeneficiarios->fetch_assoc()['total_beneficiarios']; // Obtiene el resultado de la consulta
 
-$sql = "SELECT id, nombre, descripcion, fecha_ini, fecha_fin, foto FROM programas"; //cambiar el 2 por el id del coordinador
+$sql = "SELECT id, nombre, descripcion, fecha_ini, fecha_fin, foto FROM programas WHERE users_id = $user_id"; //cambiar el 2 por el id del coordinador
 $consulta = $conn->query($sql);
 
 $fecha_actual = date('Y-m-d');
 
 // Cerrar la conexión a la base de datos
-$conn->close(); // Cierra la conexión a la base de datos
+
 ?>
 
 <!DOCTYPE html>
@@ -62,51 +62,15 @@ $conn->close(); // Cierra la conexión a la base de datos
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Coordinador Dashboard</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'Index.php' ? 'active' : ''; ?>" href="../../Resources/views/index.html"><i class="fas fa-home"></i> Inicio</a></a>
-                </li>
-                <li class="nav-item">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRoles" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Gestion de Usuarios
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownRoles">
-                            <a class="dropdown-item" href="Tabla/Beneficiarios.php">Beneficiarios</a>
-                            <a class="dropdown-item" href="Tabla/Voluntarios.php">Voluntarios</a>
-                        </div>
-                    </li>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Informes.php">Informes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="Donadores.php">Donaciones</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="../Login/Logout.php">Cerrar Sesión</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
+<?php include 'layout/header.php'; ?>
     <div class="contenedor-programas">
     <?php
         if ($consulta->num_rows > 0) {
             // Mostrar los productos en divs
             while($row = $consulta->fetch_assoc()) {
                 $id = $row['id'];
+                $sql2 = "SELECT id, nombre, descripcion, fecha, hora, responsable_id FROM actividades WHERE programa_id = $id"; //cambiar el 2 por el id del coordinador
+                $sqlActividades = $conn->query($sql2);
                 echo '
                 <div class="programa">
                     <img src="../../Public/image/' . $row["id"] .'.png" alt="Imagen del programa">
@@ -116,18 +80,90 @@ $conn->close(); // Cierra la conexión a la base de datos
                 <div class="acciones">  
                     <button id="open-eliminar-'.$id.'" class="btn-eliminar" onClick="eliminarPrgm('.$id.')">Eliminar</button>
                     <button id="open-editar-'.$id.'" class="btn-editar" onClick="editarPrgm('.$id.')">Editar</button>
-                    <div class="dropdown">
-                                <button id="dropdown-btn-'.$id.'" class="btn-actividades" onClick="toggleDropdown('.$id.')">Actividades</button>
-                                <div id="dropdown-menu-'.$id.'" class="dropdown-menu">
-                                    <button class="dropdown-item" onClick="crearActividad('.$id.')">Crear Actividad</button>
-                                    <button class="dropdown-item" onClick="mostrarActividades('.$id.')">Mostrar Actividades</button>
+                    <button class="btn-actividades" style="margin-right: auto;">Actividades</button>
+                </div>
+                <div class="extra-contenido">
+                    <button id="open-act-'.$id.'" class="crearAct" onClick="crearAct('.$id.')">Crear Actividad<i class="bi bi-clipboard-plus" style="font-size: 20px; margin-left: 10px"></i></button>';
+                    while($row2 = $sqlActividades->fetch_assoc()){
+                        $idAct = $row2['id'];
+                        $sql3 = "SELECT * FROM vista_voluntarios"; 
+                        $sqlVoluntarios = $conn->query($sql3);
+                    echo '
+                    <div class="accordion mt-3" id="accordionExample-'.$idAct.'">
+                        <div class="accordion-item border-0 rounded">
+                            <h2 class="accordion-header" id="heading-'.$idAct.'">
+                                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-'.$idAct.'" aria-expanded="false" aria-controls="collapse-'.$idAct.'">
+                                    ' . $row2["nombre"] . '
+                                </button>
+                            </h2>
+                            <div id="collapse-'.$idAct.'" class="accordion-collapse collapse" aria-labelledby="heading-'.$idAct.'" data-bs-parent="#accordionExample-'.$idAct.'">
+                                <div class="accordion-body position-relative">
+                                    <button class="btn position-absolute top-0 end-0 m-2" style="background-color: #75f156; padding: 2px 4px; font-size: 15px;" id="open-volun-'.$idAct.'" onClick="agregarVolun('.$idAct.')"><i class="bi bi-person-add" style="margin-right: 10px; font-size: 20px;"></i>Agregar voluntario</button>
+                                    <div style="display: flex; gap: 10px;">
+                                        <span style="font-weight: bold;"><i style="margin-right: 5px;" class="bi bi-calendar"></i>Fecha:</span>
+                                        <span>' . $row2["fecha"] . '</span>
+                                        <span style="font-weight: bold;"><i style="margin-right: 5px;" class="bi bi-clock"></i>Hora:</span>
+                                        <span>' . $row2["hora"] . '</span>
+                                    </div>
+                                    <span style="margin-top: 10px;">' . $row2["descripcion"] . '</span>
                                 </div>
                             </div>
-                </div>
+                        </div>
+                    </div>
+                    <dialog id="modal-volun-'.$idAct.'" class="modalVolun">
+                        <div class="volunContent">
+                        <h2>Agregar voluntario</h2>
+                            <form action="agregarVoluntario.php" method="POST">';
+                            while($row3 = $sqlVoluntarios->fetch_assoc()){
+                                $idVolun = $row3['id'];
+                            echo '
+                                <div class="accordion" id="accordionExample-'.$idVolun.'">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header d-flex align-items-center" id="heading-'.$idVolun.'">
+                                            <div class="form-check me-3">
+                                                <input type="hidden" name="idAct" value="'.$idAct.'">
+                                                <input class="form-check-input" type="radio" id="radio-'.$idVolun.'" name="responsable" value="'.$idVolun.'" required style="margin-left: 2px">
+                                                <label class="form-check-label visually-hidden" for="radio-'.$idVolun.'">
+                                                    Seleccionar voluntario 1
+                                                </label>
+                                            </div>
+                                            <button class="accordion-button collapsed flex-grow-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-'.$idVolun.'" aria-expanded="false" aria-controls="collapse-'.$idVolun.'">
+                                                ' . $row3["nombre"] . '
+                                            </button>
+                                        </h2>
+                                        <div id="collapse-'.$idVolun.'" class="accordion-collapse collapse" aria-labelledby="heading-'.$idVolun.'" data-bs-parent="#accordionExample-'.$idVolun.'">
+                                            <div class="accordion-body">
+                                                <div style="display: flex; gap: 10px;">
+                                                    <span style="font-weight: bold;"><i style="margin-right: 5px;" class="bi bi-person-vcard"></i>Ocupacion:</span>
+                                                    <span>' . $row3["ocupacion"] . '</span>
+                                                    <span style="font-weight: bold;"><i style="margin-right: 5px;" class="bi bi-geo-alt"></i>Localidad:</span>
+                                                    <span>' . $row3["localidad"] . '</span>
+                                                    <span style="font-weight: bold;">Disponibilidad:</span>
+                                                    <span>' . $row3["disponibilidad"] . '</span>
+                                                </div>
+                                                <span style="font-weight: bold; margin-top: 20px;">Habilidades:</span>
+                                                <span>' . $row3["habilidades"] . '</span>
+                                                <span style="font-weight: bold;">Motivacion:</span>
+                                                <span>' . $row3["motivacion"] . '</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ';}
+                            echo'
+                            <div class="eliminar-footer">
+                                <button id="volun" type="submit">Eliminar</button>
+                                <button type="button" id="close-volun-'.$idAct.'">Cancelar</button>
+                            </div>
+                            </form>
+                        </div>
+                    </dialog>
+                    ';}
+                echo '</div>
             </div>
         </div>
+                    
                 
-        
         <dialog id="modal-eliminar-'.$id.'" class="modalEliminar">
             <div class="eliminarContent">
                 <form action="eliminarPrograma.php" method="POST">
@@ -207,14 +243,13 @@ $conn->close(); // Cierra la conexión a la base de datos
                 <form action="crearAct.php" method="POST" enctype="multipart/form-data">
                     <div class="form-floating mb-3">
                         <input type="hidden" name="programa_id" value="'.$id.'">
-                        <input type="hidden" name="user_id" value="2"> <!-- Cambiar el user_id -->
-                        <input class="form-control" id="floatingInput" name="nombre" placeholder="name@example.com" required>
+                        <input class="form-control" id="floatingInput" name="nombreAct" placeholder="name@example.com" required>
                         <label for="floatingInput">Titulo</label>
                     </div>
                     <div class="d-flex align-items-center mb-3">
                         <!-- Input de fecha -->
                         <div class="form-floating me-2 flex-grow-1">
-                            <input type="date" class="form-control" id="floatingDate" name="fecha" placeholder="Fecha de inicio" min="'.$fecha_actual.'" required>
+                            <input type="date" class="form-control" id="floatingDate" name="fechaAct" placeholder="Fecha de inicio" min="'.$fecha_actual.'" required>
                             <label for="floatingDate">Fecha</label>
                         </div>
                         <!-- Input de hora -->
@@ -232,12 +267,12 @@ $conn->close(); // Cierra la conexión a la base de datos
                         </div>
                     </div>
                     <div class="form-floating mb-3">
-                        <textarea class="form-control" name="descripcion" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                        <textarea class="form-control" name="descripcionAct" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
                         <label for="floatingTextarea">Descripción</label>
                     </div>
                     <!-- Botones para crear o cancelar -->
                     <div class="modal-footer">
-                        <button id="crear" type="submit">Editar</button>
+                        <button id="crear" type="submit">Crear</button>
                         <button type="button" id="close-act-'.$id.'">Cancelar</button>
                     </div>
                 </form>
@@ -248,6 +283,7 @@ $conn->close(); // Cierra la conexión a la base de datos
             // Si no hay resultados
             echo "<p>No hay programas disponibles</p>";
         }
+        $conn->close(); // Cierra la conexión a la base de datos
         ?>
     </div>
     <div class="boton-crear">
@@ -314,179 +350,18 @@ $conn->close(); // Cierra la conexión a la base de datos
             </form>
         </div>
     </dialog>
-    <!-- Modal para Crear Actividad -->
-<div id="crearActividadModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeCrearActividadModal()">&times;</span>
-        <h3>Crear Actividad</h3>
-        <form id="crearActividadForm">
-            <label for="actividad-nombre">Nombre:</label>
-            <input type="text" id="actividad-nombre" name="nombre" required>
 
-            <label for="actividad-descripcion">Descripción:</label>
-            <textarea id="actividad-descripcion" name="descripcion" required></textarea>
-
-            <label for="actividad-fecha">Fecha:</label>
-            <input type="date" id="actividad-fecha" name="fecha" required>
-
-            <label for="actividad-hora">Hora:</label>
-            <input type="time" id="actividad-hora" name="hora" required>
-
-            <label for="actividad-estado">Estado:</label>
-            <select id="actividad-estado" name="estado" required>
-                <option value="pendiente">Pendiente</option>
-                <option value="en progreso">En Progreso</option>
-                <option value="completado">Completado</option>
-            </select>
-
-            <button type="submit" class="btn-submit">Guardar</button>
-        </form>
-    </div>
-</div>
-<!-- Modal para Mostrar Actividades -->
-<div id="modalMostrarActividades" class="modal-tab">
-    <div class="modal-content-tab">
-        <span class="close" onclick="cerrarModalMostrarActividades()">&times;</span>
-        <h3>Actividades</h3>
-        <table id="actividades-table" border="2">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Las actividades se agregarán aquí dinámicamente -->
-            </tbody>
-        </table>
-    </div>
-</div>
     <script>
-        // Función para abrir el modal y cargar actividades
-// Función para abrir el modal y cargar las actividades
-function mostrarActividades(id) {
-    console.log("Mostrando actividades para el id: " + id); // Agrega este log para verificar si la función es llamada
+        document.addEventListener('DOMContentLoaded', () => {
+        const botonesActividades = document.querySelectorAll('.btn-actividades');
 
-    // Aquí es donde recuperamos las actividades relacionadas con el id
-    // Usamos datos de ejemplo por ahora
-    const actividades = [
-        { nombre: 'Actividad 1', descripcion: 'Descripción de Actividad 1', fecha: '12/12/2024', hora: '10:00 AM', estado: 'Pendiente' },
-        { nombre: 'Actividad 2', descripcion: 'Descripción de Actividad 2', fecha: '13/12/2024', hora: '11:00 AM', estado: 'En progreso' },
-        { nombre: 'Actividad 3', descripcion: 'Descripción de Actividad 3', fecha: '14/12/2024', hora: '12:00 PM', estado: 'Finalizada' }
-    ];
-
-    // Mostrar el modal
-    const modal = document.getElementById('modalMostrarActividades');
-    modal.style.display = "block"; // Aseguramos que el modal sea visible
-
-    // Llenar la tabla con las actividades
-    const tableBody = document.getElementById('actividades-table').getElementsByTagName('tbody')[0];
-    tableBody.innerHTML = ''; // Limpiar las filas anteriores
-
-    actividades.forEach(actividad => {
-        const row = tableBody.insertRow();
-        row.insertCell(0).textContent = actividad.nombre;
-        row.insertCell(1).textContent = actividad.descripcion;
-        row.insertCell(2).textContent = actividad.fecha;
-        row.insertCell(3).textContent = actividad.hora;
-        row.insertCell(4).textContent = actividad.estado;
-    });
-    function mostrarActividades(id) {
-    console.log("Clic en Mostrar Actividades. ID:", id); // Verifica que esta línea se ejecute al hacer clic
-    // Resto del código...
-}
-}
-
-// Función para cerrar el modal
-function cerrarModalMostrarActividades() {
-    const modal = document.getElementById('modalMostrarActividades');
-    modal.style.display = "none"; // Ocultamos el modal
-}
-
-// Cerrar el modal si se hace clic fuera de él
-window.onclick = function(event) {
-    const modal = document.getElementById('modalMostrarActividades');
-    if (event.target == modal) {
-        modal.style.display = "none"; // Cierra el modal si se hace clic fuera de él
-    }
-};
-    </script>
-    <script>
-     // Función para abrir el modal de Crear Actividad
-function crearActividad(id) {
-    const modal = document.getElementById('crearActividadModal');
-    modal.style.display = 'block';
-
-    // Si necesitas asociar el ID del programa a la actividad
-    document.getElementById('crearActividadForm').dataset.programId = id;
-}
-
-// Función para cerrar el modal
-function closeCrearActividadModal() {
-    const modal = document.getElementById('crearActividadModal');
-    modal.style.display = 'none';
-}
-
-// Cerrar el modal si se hace clic fuera del contenido
-window.onclick = function(event) {
-    const modal = document.getElementById('crearActividadModal');
-    if (event.target === modal) {
-        closeCrearActividadModal();
-    }
-};
-
-// Manejo del formulario de creación de actividades
-document.getElementById('crearActividadForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const programId = e.target.dataset.programId; // ID del programa asociado
-    const nombre = document.getElementById('actividad-nombre').value;
-    const descripcion = document.getElementById('actividad-descripcion').value;
-    const fecha = document.getElementById('actividad-fecha').value;
-    const hora = document.getElementById('actividad-hora').value;
-    const estado = document.getElementById('actividad-estado').value;
-
-    // Aquí puedes agregar la lógica para enviar los datos al servidor
-    console.log({
-        programId,
-        nombre,
-        descripcion,
-        fecha,
-        hora,
-        estado,
-    });
-
-    // Cerrar el modal después de guardar
-    closeCrearActividadModal();
-});
-    </script>
-    <script>
-        function toggleDropdown(id) {
-    const dropdownMenu = document.getElementById(`dropdown-menu-${id}`);
-    const isVisible = dropdownMenu.classList.contains('show');
-
-    // Cierra todos los dropdowns abiertos
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        menu.classList.remove('show');
-    });
-
-    // Si no estaba visible, lo muestra
-    if (!isVisible) {
-        dropdownMenu.classList.add('show');
-    }
-}
-
-// Cerrar dropdowns si se hace clic fuera de ellos
-window.onclick = function(event) {
-    if (!event.target.matches('.btn-actividades')) {
-        document.querySelectorAll('.dropdown-menu').forEach(menu => {
-            menu.classList.remove('show');
+        botonesActividades.forEach(boton => {
+            boton.addEventListener('click', () => {
+                const programa = boton.closest('.programa');
+                programa.classList.toggle('expandido');
+            });
         });
-    }
-};
+    });
     </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
