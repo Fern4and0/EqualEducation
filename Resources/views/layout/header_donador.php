@@ -15,9 +15,9 @@ session_start();
   <link rel="icon" href="images/favicon.png" type="image/x-icon">
   <link rel="stylesheet" type="text/css"
     href="//fonts.googleapis.com/css?family=Poppins:300,300i,400,500,600,700,800,900,900i%7CRoboto:400%7CRubik:100,400,700">
-  <link rel="stylesheet" href="../css/bootstrap.css">
-  <link rel="stylesheet" href="../css/fonts.css">
-  <link rel="stylesheet" href="../css/styles_index.css">
+  <link rel="stylesheet" href="../../css/bootstrap.css">
+  <link rel="stylesheet" href="../../css/fonts.css">
+  <link rel="stylesheet" href="../../css/styles_index.css">
 </head>
 
 <body>
@@ -70,33 +70,6 @@ session_start();
                       </button>
                       <div class="dropdown-menu" aria-labelledby="profileDropdown">
                       <!-- Enlace para cerrar sesión -->
-                      <?php
-                      // Obtener el ID del rol del usuario desde la sesión
-                      $role_id = isset($_SESSION['id_rol']) ? $_SESSION['id_rol'] : null;
-
-                      // Redirigir al usuario a su Dashboard correspondiente
-                      switch ($role_id) {
-                        case 1:
-                            $dashboard_url = "/EqualEducation/Controllers/Administrador/Administrador-Dashboard.php";
-                            break;
-                        case 2:
-                            $dashboard_url = "/EqualEducation/Controllers/Coordinador/Cordi-Dashboard.php";
-                            break;
-                        case 3:
-                            $dashboard_url = "/EqualEducation/Controllers/Beneficiario/Beneficiario-Dashboard.php";
-                            break;
-                        case 4:
-                            $dashboard_url = "/EqualEducation/Controllers/Voluntario/Voluntario-Dashboard.php";
-                            break;
-                        case 5:
-                            $dashboard_url = "/EqualEducation/Controllers/Donador/Donador-Dashboard.php";
-                            break;
-                        default:
-                            $dashboard_url = "../views/login.php"; // Redirige al login si no hay rol
-                            break;
-                    }
-                      ?>
-                      <a class="dropdown-item" href="../../Controllers/Administrador/Administrador-Dashboard.php">Mi Tablero</a>
                       <a class="dropdown-item" href="/EqualEducation/Controllers/Login/Logout.php">Cerrar Sesión</a>
                       </div>
                       </div>
@@ -112,7 +85,6 @@ session_start();
       </nav>
     </div>
   </header>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
