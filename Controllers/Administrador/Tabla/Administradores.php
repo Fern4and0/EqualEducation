@@ -107,69 +107,86 @@ function getRoleName($id_rol) {
         </div>
     </nav>
 
-    <div class="container"> 
-        <div class="row">
-            <div class="col-md-12">
-                <h2>Administradores Registrados</h2>
+    <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Administradores Registrados</h2>
 
-                <!-- Tabla para Administradores -->
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5>Administradores</h5>
-                        </div>
-                        <div class="col-md-6 text-right">
-                            <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal" style="width: 40px; height: 40px;">
-                                <i class="fas fa-user-plus"></i>
-                            </button>
-                        </div>
+            <!-- Tabla para Administradores -->
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Administradores</h5>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#solicitudesModal" style="width: 40px; height: 40px;">
+                            <i class="fas fa-envelope"></i>
+                        </button>
+                        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal" style="width: 40px; height: 40px;">
+                            <i class="fas fa-user-plus"></i>
+                        </button>
                     </div>
                 </div>
-                <div class="card-body">
-                    <!-- Barra de búsqueda -->
-                    <div class="form-group">
-                        <input type="text" id="searchInputAdministradores" class="form-control" placeholder="Buscar usuarios...">
-                    </div>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Rol</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="userTableAdministradores">
-                            <?php foreach ($users as $user): ?>
-                                <?php if ($user['id_rol'] == 1): ?>
-                                    <tr>
-                                        <td><?php echo $user['id']; ?></td>
-                                        <td><?php echo !empty($user['nombre']) ? htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8') : 'N/A'; ?></td>
-                                        <td><?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                        <td><?php echo getRoleName($user['id_rol']); ?></td>
-                                        <td>
-                                            <button class="btn btn-primary btn-sm edit-btn" 
-                                                data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" 
-                                                data-name="<?php echo htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8'); ?>" 
-                                                data-email="<?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?>" 
-                                                data-role="<?php echo htmlspecialchars($user['id_rol'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
-                                            <button class="btn btn-danger btn-sm delete-btn" 
-                                                data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Eliminar</button>
-                                        </td>
-                                    </tr>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            </div>
+            <div class="card-body">
+                <!-- Barra de búsqueda -->
+                <div class="form-group">
+                    <input type="text" id="searchInputAdministradores" class="form-control" placeholder="Buscar usuarios...">
                 </div>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableAdministradores">
+                        <?php foreach ($users as $user): ?>
+                            <?php if ($user['id_rol'] == 1): ?>
+                                <tr>
+                                    <td><?php echo $user['id']; ?></td>
+                                    <td><?php echo !empty($user['nombre']) ? htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8') : 'N/A'; ?></td>
+                                    <td><?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td><?php echo getRoleName($user['id_rol']); ?></td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm edit-btn" 
+                                            data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                            data-name="<?php echo htmlspecialchars($user['nombre'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                            data-email="<?php echo htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                            data-role="<?php echo htmlspecialchars($user['id_rol'], ENT_QUOTES, 'UTF-8'); ?>">Editar</button>
+                                        <button class="btn btn-danger btn-sm delete-btn" 
+                                            data-id="<?php echo htmlspecialchars($user['id'], ENT_QUOTES, 'UTF-8'); ?>">Eliminar</button>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
-            
-            <div class="col-md-12 text-right"></div>
-                <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#solicitudesModal" style="width: 40px; height: 40px;">
-                    <i class="fas fa-envelope"></i>
-                </button>
-            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilo para cambiar los colores de la tabla */
+    .table th, .table td {
+        background-color: #f9f9f9; /* Fondo blanco claro para las celdas */
+        color: #333; /* Texto de color gris oscuro */
+    }
+    .table-striped tbody tr:nth-child(odd) {
+        background-color: #f1f1f1; /* Fondo gris claro para filas impares */
+    }
+    .table-striped tbody tr:nth-child(even) {
+        background-color: #fff; /* Fondo blanco para filas pares */
+    }
+    .table th {
+        background-color: #e9ecef; /* Fondo gris claro para el encabezado */
+    }
+</style>
+
             <!-- Modal para ver solicitudes -->
             <div class="modal fade" id="solicitudesModal" tabindex="-1" role="dialog" aria-labelledby="solicitudesModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">

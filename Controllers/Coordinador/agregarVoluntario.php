@@ -4,15 +4,11 @@ session_start();
 
 include '../../DB/DB.php';
 
-$programa_id = $_POST["programa_id"];
-$nombre = $_POST["nombreAct"];
-$fecha = $_POST["fechaAct"];
-$hora = $_POST["hora"];
-$descripcion = $_POST["descripcionAct"];
+$act_id = $_POST["idAct"];
+$voluntario_id = $_POST["responsable"];
 
 // Preparar la consulta SQL para insertar datos
-$sql = "INSERT INTO actividades (programa_id, nombre, descripcion, fecha, hora)
-        VALUES ('$programa_id', '$nombre', '$descripcion', '$fecha', '$hora')";
+$sql = "UPDATE actividades SET responsable_id = '$voluntario_id' WHERE id = '$act_id'";
 
 // Ejecutar la consulta
 if ($conn->query($sql) === TRUE) {
