@@ -1,6 +1,8 @@
 <?php
 // Iniciar sesión para verificar si el usuario está logueado
 session_start();
+
+
 ?>
 <!DOCTYPE html>
 <html class="wide wow-animation" lang="en">
@@ -55,7 +57,7 @@ session_start();
               <div class="rd-navbar-nav-wrap">
                 <!-- RD Navbar Nav-->
                 <ul class="rd-navbar-nav">
-                  <li class="rd-nav-item active"><a class="rd-nav-link" href="../views/index.php">Inicio</a></li>
+                  <li class="rd-nav-item"><a class="rd-nav-link" href="../views/index.php">Inicio</a></li>
                   <li class="rd-nav-item"><a class="rd-nav-link" href="../views/programas.php">Programas</a></li>
                   <li class="rd-nav-item"><a class="rd-nav-link" href="../views/nosotros.php">Sobre nosotros</a></li>
                   <li class="rd-nav-item"><a class="rd-nav-link" href="../views/Modals.php">Unete</a></li>
@@ -73,31 +75,31 @@ session_start();
                       <!-- Enlace para cerrar sesión -->
                       <?php
                       // Obtener el ID del rol del usuario desde la sesión
-                      $role_id = isset($_SESSION['id_rol']) ? $_SESSION['id_rol'] : null;
-
+                      $role_id = $_SESSION['user_rol'];
+                        echo $role_id;
                       // Redirigir al usuario a su Dashboard correspondiente
                       switch ($role_id) {
                         case 1:
-                            $dashboard_url = "/EqualEducation/Controllers/Administrador/Administrador-Dashboard.php";
+                            $dashboard_url = "/EqualEducation/Controllers/Administrador/Layout/header.php";
                             break;
                         case 2:
                             $dashboard_url = "/EqualEducation/Controllers/Coordinador/Cordi-Dashboard.php";
                             break;
                         case 3:
-                            $dashboard_url = "/EqualEducation/Controllers/Beneficiario/Beneficiario-Dashboard.php";
+                            $dashboard_url = "/EqualEducation/Controllers/Beneficiario/navbar.php";
                             break;
                         case 4:
-                            $dashboard_url = "/EqualEducation/Controllers/Voluntario/Voluntario-Dashboard.php";
+                            $dashboard_url = "/EqualEducation/Controllers/Voluntario/navbar.php";
                             break;
                         case 5:
-                            $dashboard_url = "/EqualEducation/Controllers/Donador/Donador-Dashboard.php";
+                            $dashboard_url = "/EqualEducation/Resources/views/Misdonaciones.php";
                             break;
                         default:
                             $dashboard_url = "../views/login.php"; // Redirige al login si no hay rol
                             break;
-                    }
+                        }
                       ?>
-                      <a class="dropdown-item" href="../../Controllers/Administrador/Administrador-Dashboard.php">Mi Tablero</a>
+                      <a class="dropdown-item" href="<?php echo $dashboard_url; ?>">Mi Tablero</a>
                       <a class="dropdown-item" href="/EqualEducation/Controllers/Login/Logout.php">Cerrar Sesión</a>
                       </div>
                       </div>
