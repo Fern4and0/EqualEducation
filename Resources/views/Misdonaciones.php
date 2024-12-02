@@ -17,7 +17,7 @@
 </head>
 <body>
     <div class="page">
-    <?php include('header.php');
+    <?php include('./layout/header_donador.php');
     include '../../DB/DB.php';
 
     $user_id = $_SESSION['user_id'];
