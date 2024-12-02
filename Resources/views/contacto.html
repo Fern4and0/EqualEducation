@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto</title>
+    <link rel="stylesheet" href="../css/styles_contacto.css">
+</head>
+<body>
+    <div class="form-content">
+        <h3>Contactanos</h3>
+        <h4>Si tienes alguna duda, comentario o sugerencia, puedes contactarnos y nos comunicaremos contigo lo antes posible.</h4>
+        <form action="https://formspree.io/f/xdkooanl" method="POST" id="formularioContacto">
+            <label for="name"></label>
+            <input type="text" name="name" id="name" placeholder="Nombre" required>
+
+            <label for="email"></label>
+            <input type="email" name="email" id="email" placeholder="E-mail" required>
+
+            <label for="coments"></label>
+            <textarea name="coments" id="coments" placeholder="Comentario o sugerencia:" cols="30" rows="5" required></textarea>
+
+            <input class="btn" type="submit" value="Enviar">
+        </form>
+    </div>
+    <script>
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        };
+
+        document.getElementById('formularioContacto').addEventListener('submit', function(event) {
+        var name = document.getElementById('name').value;
+        var email = document.getElementById('email').value;
+        var coments = document.getElementById('coments').value;
+
+        if (name === "" || email === "" || coments === "") {
+        alert("Por favor, completa todos los campos.");
+        event.preventDefault();
+        }
+    });
+    </script>
+</body>
+</html> 
