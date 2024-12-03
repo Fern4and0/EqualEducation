@@ -1,0 +1,285 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Display:ital,wght@0,100..900;1,100..900&display=swap');
+body {
+    font-family: "Noto Sans Display";
+    font-size: 15px;
+    background-color: #e3e3e3;
+    padding: 20px;
+}
+
+.panel {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    color: black;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.accion-prog {
+    margin-bottom: -25px;
+    margin-right: -5px;
+}
+
+h2 {
+    margin-top: 0px;
+    font-size: 24px;
+}
+
+h3 {
+    text-align: start;
+    margin-left: 0px;
+    margin-top: 0px;
+    font-size: 18px;
+}
+
+p {
+    margin-left: 0px;
+}
+
+.btn-crear {
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    margin-left: 92%;
+}
+
+.titulo {
+    margin-left: 20px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.programa img {
+    width: 200px; 
+    height: auto;
+    border-radius: 5px;
+    margin-right: 20px; 
+}
+
+.programa-contenido {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.acciones {
+    display: flex;
+    flex-direction: row-reverse;
+    margin-top: 50px;
+}
+
+.programa {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 80%;
+    width: 100%;
+    margin-left: 90px;
+    margin-top: 20px;
+    margin-bottom: 20px !important;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    position: static;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+    height: auto; /* Altura inicial */
+}
+
+.programa.expandido {
+    max-height: auto; /* Altura cuando se expande */
+}
+
+.extra-contenido {
+    display: none;
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f3f3f3; /* Fondo ligeramente más oscuro */
+    border-radius: 8px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra interna */
+    border-top: 2px solid #ddd; /* Línea separadora */
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+}
+
+.programa.expandido .extra-contenido {
+    display: block;
+    opacity: 1;
+}
+.extra-contenido .btn-nuevo {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.extra-contenido .btn-nuevo:hover {
+    background-color: #0056b3;
+}
+
+.accordion-body {
+    background-color: #fff;
+    border-radius: 0 0 10px 10px; /* Solo los bordes inferiores */
+    padding: 20px;
+    position: relative; /* Para posicionar el botón */
+    display: flex !important;
+    flex-direction: column !important; /* Asegura que los elementos se apilen verticalmente */
+}
+
+.accordion-body .btn-danger {
+    align-self: flex-end !important; /* Alinea el botón a la derecha */
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px; /* Espacio entre el botón y el contenido */
+    transition: background-color 0.3s;
+}
+
+.accordion-body .btn-danger:hover {
+    background-color: #c82333;
+}
+
+
+.btn-ver {
+    background-color: #32CD32;
+    align-self: flex-start; /* Asegura que esté alineado a la izquierda */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    position: none;
+    bottom: 10px; 
+}
+.btn-editar {
+    background-color: #007BFF; /* azul */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    position: none;
+    bottom: 10px; 
+    right: 110px; 
+}
+
+.btn-informe {
+    background-color: #c7c7c7; /* rojo */
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    position: none;
+    bottom: 10px; 
+    right: 10px; 
+}
+
+.btn-crear:hover {
+    background-color: #005977;
+}
+
+.acciones .btn-editar:hover {
+    background-color: #014d9e;
+}
+
+.acciones .btn-eliminar:hover {
+    background-color: #ba4b38;
+}
+
+.acciones .btn-ver:hover {
+    background-color: #3b8e3b;
+}
+.crear-act{
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    padding: 10px 20px;
+    padding-bottom: 0;
+}
+.boton-crear{
+    width: 190px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+:root{
+    --fuentePrincipal: "Reddit Sans Condensed", sans-serif;
+}
+
+/* Estilos para la ventana emergente */
+.modal, .modalEliminar, .modalEditar, .modalAct , .modalVolun{
+    display: none; /* Oculta la ventana por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro traslúcido */
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+.modal-content, .eliminarContent, .editarContent, .actContent, .volunContent{
+    position: absolute;
+    font-size: 15px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    width: 800px;
+    height: auto;
+}
+
+
+
+/* Estilos para los botones */
+.toolbar button {
+    margin-right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-footer, .eliminar-footer {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+}
+
+button[type="button"]:hover {
+    background-color: #ccc;
+}
+
+.modal-backdrop {
+    z-index: 1040 !important;
+}
+.modal {
+    z-index: 1050 !important;
+}
