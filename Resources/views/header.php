@@ -62,9 +62,13 @@ session_start();
                     <li class="rd-nav-item"><a class="rd-nav-link" href="../views/programas.php">Programas</a></li>
                   <?php endif; ?>
                   <li class="rd-nav-item"><a class="rd-nav-link" href="../views/nosotros.php">Sobre nosotros</a></li>
+                  <li class="rd-nav-item">
                   <?php if (isset($_SESSION['user_id'])): ?>
-                    <li class="rd-nav-item"><a class="rd-nav-link" href="../views/Modals.php">Únete</a></li>
+            <a class="rd-nav-link" href="../views/Modals.php">Únete</a>
+                  <?php else: ?>
+                      <a class="rd-nav-link" href="../views/login.php">Únete</a>
                   <?php endif; ?>
+                  </li>
                   <?php if (!isset($_SESSION['user_id'])): ?>
                     <li class="rd-nav-item"><a class="rd-nav-link" href="../views/login.php">Iniciar sesión</a></li>
                   <?php else: ?>
@@ -89,10 +93,10 @@ session_start();
                             $dashboard_url = "/EqualEducation/Controllers/Coordinador/Cordi-Dashboard.php";
                             break;
                         case 3:
-                            $dashboard_url = "/EqualEducation/Controllers/Beneficiario/navbar.php";
+                            $dashboard_url = "/EqualEducation/Controllers/Beneficiario/Programas.php";
                             break;
                         case 4:
-                            $dashboard_url = "/EqualEducation/Controllers/Voluntario/navbar.php";
+                            $dashboard_url = "/EqualEducation/Controllers/Voluntario/Actividades.php";
                             break;
                         case 5:
                             $dashboard_url = "/EqualEducation/Resources/views/Misdonaciones.php";
