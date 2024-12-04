@@ -1,4 +1,4 @@
-<?php
+<a?php
 // Verifica si el usuario ya tiene una sesión activa
 session_start();
 $is_logged_in = isset($_SESSION['user_id']) ? true : false;
@@ -114,7 +114,7 @@ $is_logged_in = isset($_SESSION['user_id']) ? true : false;
             <label for="password"></label>
         </div>
         <div class="checkbox-container">
-            <h6>términos y condiciones</h6>
+            <a href="#" class="forgot">Términos y condiciones</a>
             <input type="checkbox" id="termsCheckbox" name="termsCheckbox" required />
             <label for="termsCheckbox"><a href="#" class="forgot">Términos y condiciones</a>
         </div>
@@ -159,7 +159,7 @@ $is_logged_in = isset($_SESSION['user_id']) ? true : false;
             <span class="close">&times;</span>
             <h2>Términos y Condiciones</h2>
             <p>Bienvenido a EqualEducation. Al usar esta plataforma, aceptas cumplir con nuestras normas, incluyendo la gestión responsable de tu cuenta y el uso exclusivo con fines educativos y legales. Nos reservamos el derecho de gestionar o restringir el acceso si se detecta algún mal uso.</p>
-            <p>Para más detalles, consulta nuestra <a href="política_privacidad.html" target="_blank">[Política de Privacidad]</a>.</p>
+            <p>Para más detalles, consulta nuestra <a href="política_privacidad.html">[Política de Privacidad]</a>.</p>
         </div>
     </div>
 
