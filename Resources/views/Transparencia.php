@@ -157,18 +157,18 @@ $conn->close(); // Cierra la conexión a la base de datos
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <?php
-                                        if ($consultaTabla->num_rows > 0) {
-                                            while ($row = $consultaTabla->fetch_assoc()) {
-                                                echo '
+                                    <?php
+                                    if ($consultaTabla->num_rows > 0) {
+                                        while ($row = $consultaTabla->fetch_assoc()) {
+                                            echo '
+                                            <tr>
                                                 <td>' . $row["nombre_usuario"] . '</td>
                                                 <td><span class="badge bg-success">$' . $row["monto_donacion"] . '</span></td>
-                                                <td class="d-none d-md-table-cell">' . $row["fecha_donacion"] . '</td>';
-                                            }
+                                                <td class="d-none d-md-table-cell">' . $row["fecha_donacion"] . '</td>
+                                            </tr>';
                                         }
-                                        ?>
-                                    </tr>
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>

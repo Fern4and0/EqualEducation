@@ -152,7 +152,7 @@ $fecha_actual = date('Y-m-d');
                             ';}
                             echo'
                             <div class="eliminar-footer">
-                                <button id="volun" type="submit">Eliminar</button>
+                                <button id="volun" type="submit">Asignar</button>
                                 <button type="button" id="close-volun-'.$idAct.'">Cancelar</button>
                             </div>
                             </form>
@@ -168,6 +168,7 @@ $fecha_actual = date('Y-m-d');
             <div class="eliminarContent">
                 <form action="eliminarPrograma.php" method="POST">
                 <input type="hidden" name="id" value="'.$id.'">
+                <input type="hidden" name="user_id" value="'.$user_id.'">
                 <span>¿Estas seguro que quieres eliminar este programa?</span>
                 <div class="eliminar-footer">
                     <button id="eliminar" type="submit">Eliminar</button>
