@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -19,7 +21,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<?php include('header.php');?>
+<?php include('header.php');
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: ../views/login.php'); // Redirige al login
+        exit();
+    }
+?>
     <div class="page">
       <section class="parallax-container" data-parallax-img="../../Public/image/img6.jpg">
         <div class="parallax-content breadcrumbs-custom context-dark">
@@ -196,7 +203,7 @@
               <div class="col-12"><a href="../views/index.php"><img src="../Images/logo.png" alt="" width="207" height="51"/></a></div>
               <div class="col-12">
                 <ul class="footer-minimal-nav">
-                  <li><a href="../views/nosotros.html">Equipo</a></li>
+                  <li><a href="../views/nosotros.php">Equipo</a></li>
                   <li><a href="../views/política_privacidad.html">Política de privacidad</a></li>
                   <li><a href="../views/contacto.html">Contacto</a></li>
                 </ul>

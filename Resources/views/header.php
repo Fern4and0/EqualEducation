@@ -60,7 +60,9 @@ session_start();
                   <li class="rd-nav-item"><a class="rd-nav-link" href="../views/index.php">Inicio</a></li>
                   <li class="rd-nav-item"><a class="rd-nav-link" href="../views/programas.php">Programas</a></li>
                   <li class="rd-nav-item"><a class="rd-nav-link" href="../views/nosotros.php">Sobre nosotros</a></li>
-                  <li class="rd-nav-item"><a class="rd-nav-link" href="../views/Modals.php">Unete</a></li>
+                  <?php if (isset($_SESSION['user_id'])): ?>
+                    <li class="rd-nav-item"><a class="rd-nav-link" href="../views/Modals.php">Únete</a></li>
+                  <?php endif; ?>
                   <?php if (!isset($_SESSION['user_id'])): ?>
                     <li class="rd-nav-item"><a class="rd-nav-link" href="../views/login.php">Iniciar sesión</a></li>
                   <?php else: ?>
