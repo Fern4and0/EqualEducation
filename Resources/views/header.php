@@ -83,7 +83,7 @@ session_start();
                       // Redirigir al usuario a su Dashboard correspondiente
                       switch ($role_id) {
                         case 1:
-                            $dashboard_url = "/EqualEducation/Controllers/Administrador/Layout/header.php";
+                            $dashboard_url = "/EqualEducation/Controllers/Administrador/Administrador-Dashboard.php";
                             break;
                         case 2:
                             $dashboard_url = "/EqualEducation/Controllers/Coordinador/Cordi-Dashboard.php";
