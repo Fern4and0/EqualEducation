@@ -29,27 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Verificamos si la solicitud es de
                 $_SESSION['user_email'] = $user['email']; // Guardamos el email del usuario en la sesión
                 $_SESSION['user_rol'] = $user['id_rol']; // Guardamos el rol del usuario en la sesión
 
-                // Redirigimos según el rol del usuario
-                switch ($user['id_rol']) {
-                    case 1: // Administrador
-                        header("Location: ../Administrador/Administrador-Dashboard.php");
-                        break;
-                    case 2: // Coordinador
-                        header("Location: ../Coordinador/Cordi-Dashboard.php");
-                        break;
-                    case 3: // Beneficiario
-                        header("Location: ../Beneficiario/navbar.php");
-                        break;
-                    case 4: // Voluntario
-                        header("Location: ../Voluntario/Voluntario-Dashboard.php");
-                        break;
-                    case 5: // Donador
-                        header("Location: ../Donador/Donador-Dashboard.php");
-                        break;
-                    default:
-                        // Rol desconocido, redirigimos a Inicio
-                        header("Location: ../../Resources/views/index.php");
-                }
+                header("Location: ../../Resources/views/index.php");
                 exit(); // Terminamos la ejecución del script
             } else {
                 $error = "Tus Credenciales son incorrectas, intenta de nuevo por favor."; // Mensaje de error si el password no coincide

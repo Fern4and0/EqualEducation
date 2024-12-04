@@ -127,11 +127,6 @@
             <div class="col-md-6 col-lg-12">
               <div class="team-classic">
                 <div class="team-classic-figure"><img src="#" alt="" width="200" height="250"/>
-                  <ul class="team-classic-soc-list">
-                    <li><a class="icon icon-md fa-facebook" href="#"></a></li>
-                    <li><a class="icon icon-md fa-instagram" href="#"></a></li>
-                    <li><a class="icon icon-md fa-twitter" href="#"></a></li>
-                  </ul>
                 </div>
                 <div class="team-classic-caption">
                   <h4><a class="team-name" href="#">Fernando Mendoza</a></h4>
@@ -142,11 +137,6 @@
             <div class="col-md-6 col-lg-4">
               <div class="team-classic">
                 <div class="team-classic-figure"><img src="images/team-classic-2-390x252.jpg" alt="" width="200" height="250"/>
-                  <ul class="team-classic-soc-list">
-                    <li><a class="icon icon-md fa-facebook" href="#"></a></li>
-                    <li><a class="icon icon-md fa-instagram" href="#"></a></li>
-                    <li><a class="icon icon-md fa-twitter" href="#"></a></li>
-                  </ul>
                 </div>
                 <div class="team-classic-caption">
                   <h4><a class="team-name" href="#">Adriel Gúzman</a></h4>
@@ -157,11 +147,6 @@
             <div class="col-md-6 col-lg-4">
               <div class="team-classic">
                 <div class="team-classic-figure"><img src="images/team-classic-3-390x252.jpg" alt="" width="200" height="250"/>
-                  <ul class="team-classic-soc-list">
-                    <li><a class="icon icon-md fa-facebook" href="#"></a></li>
-                    <li><a class="icon icon-md fa-instagram" href="#"></a></li>
-                    <li><a class="icon icon-md fa-twitter" href="#"></a></li>
-                  </ul>
                 </div>
                 <div class="team-classic-caption">
                   <h4><a class="team-name" href="#">Antonio Rodríguez</a></h4>
@@ -172,11 +157,6 @@
             <div class="col-md-6 col-lg-4">
               <div class="team-classic">
                 <div class="team-classic-figure"><img src="../../Public/image/JP.jpg" alt="" width="200" height="250"/>
-                  <ul class="team-classic-soc-list">
-                    <li><a class="icon icon-md fa-facebook" href="#"></a></li>
-                    <li><a class="icon icon-md fa-instagram" href="#"></a></li>
-                    <li><a class="icon icon-md fa-twitter" href="#"></a></li>
-                  </ul>
                 </div>
                 <div class="team-classic-caption">
                   <h4><a class="team-name" href="#">Juan Pablo Gómez</a></h4>
@@ -194,7 +174,7 @@
               <div class="col-12"><a href="../views/index.php"><img src="../Images/logo.png" alt="" width="207" height="51"/></a></div>
               <div class="col-12">
                 <ul class="footer-minimal-nav">
-                  <li><a href="../views/nosotros.html">Equipo</a></li>
+                  <li><a href="../views/nosotros.php">Equipo</a></li>
                   <li><a href="../views/política_privacidad.html">Política de privacidad</a></li>
                   <li><a href="../views/contacto.html">Contacto</a></li>
                 </ul>
