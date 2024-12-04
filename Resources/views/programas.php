@@ -15,16 +15,14 @@
     <link rel="stylesheet" href="../css/styles_index.css">
     <link rel="stylesheet" href="../css/styles_programs.css">
     <style>.ie-panel{display: none;background: #212121;padding: 10px 0;box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3);clear: both;text-align:center;position: relative;z-index: 1;} html.ie-10 .ie-panel, html.lt-ie-10 .ie-panel {display: block;}</style>
-    <style>
-      
-    </style>
 </head>
 <body>
 <div class="page">
         <?php   include('header.php'); 
         include '../../DB/DB.php';
 
-        $user_id = $_SESSION['user_rol'];
+        $user_id = $_SESSION['user_id'];
+        $user_rol = $_SESSION['user_rol'];
         $fecha_actual = date('Y-m-d');
 
 
@@ -57,6 +55,10 @@ if ($consulta->num_rows > 0) {
     // Mostrar los productos en divs
     while ($row = $consulta->fetch_assoc()) {
         $id = $row['id'];
+        $checkInscripcionSQL = "SELECT * FROM users_programa WHERE programa_id = $id AND beneficiario_id = $user_id";
+        $inscripcionResult = $conn->query($checkInscripcionSQL);
+
+        $isInscrito = $inscripcionResult->num_rows > 0;
         echo "<div class='featured-program'>
             <div>
                 <img src='../../Public/image/" . $row["id"] . ".png' alt='Featured image' class='featured-image'>
@@ -79,12 +81,19 @@ if ($consulta->num_rows > 0) {
         
         <div id='modal-$id' class='modal'>
             <div class='modal-content'>
-                <span class='close' onclick='closeModal($id)'>&times;</span>
-                <form action='../../Controllers/unirse.php' method='POST'>
+                <span class='close' onclick='closeModal($id)'>&times;</span>";
+                if ($isInscrito || $user_rol != 3){
+                echo "<p class='already-joined'></p>
+                ";
+                } else {
+                    echo "
+                    <form action='../../Controllers/unirse.php' method='POST'>
                 <input type='hidden' name='programa_id' value=".$id.">
                 <input type='hidden' name='user_id' value=".$user_id.">
                 <button id='join-button-$id' class='join-button' type='submit'>Unirse</button>
-                </form>
+                </form>";
+                }
+                echo "
                 <h4 id='modal-nombre-$id' class='modal-header'>" . $row['nombre'] . "</h4>
                 <div class='modal-body'>
                     <div class='modal-section'>
@@ -121,6 +130,7 @@ if ($consulta->num_rows > 0) {
 } else {
     echo "<p>No hay programas disponibles</p>";
 }
+$conn->close();
 ?>
 
     <footer class="section footer-minimal context-dark">
@@ -130,7 +140,7 @@ if ($consulta->num_rows > 0) {
               <div class="col-12"><a href="../views/index.php"><img src="../Images/logo.png" alt="" width="207" height="51"/></a></div>
               <div class="col-12">
                 <ul class="footer-minimal-nav">
-                  <li><a href="../views/nosotros.html">Equipo</a></li>
+                  <li><a href="../views/nosotros.php">Equipo</a></li>
                   <li><a href="../views/política_privacidad.html">Política de privacidad</a></li>
                   <li><a href="../views/contacto.html">Contacto</a></li>
                 </ul>

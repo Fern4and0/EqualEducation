@@ -51,6 +51,25 @@ $is_logged_in = isset($_SESSION['user_id']) ? true : false;
             text-decoration: none;
             cursor: pointer;
         }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .checkbox-container label a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .checkbox-container label a:hover {
+            text-decoration: underline;
+        }
+
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -79,25 +98,29 @@ $is_logged_in = isset($_SESSION['user_id']) ? true : false;
 </head>
 <body>
 <div class="container" id="container" data-logged-in="<?php echo $is_logged_in ? 'true' : 'false'; ?>">
-        <div class="form-container sign-up-container">
-            <form method="post" action="../../Controllers/Login/Registro.php" id="formularioRegistro">
-                <h1>Crear cuenta</h1>
-                <div class="infield">
-                    <input type="text" id="nombre" name="nombre" required placeholder="Nombre"/>
-                    <label for="nombre"></label>
-                </div>
-                <div class="infield">
-                    <input type="email" id="email" name="email" required placeholder="E-mail"/>
-                    <label for="email"></label>
-                </div>
-                <div class="infield">
-                    <input type="password" id="password" name="password" required placeholder="Contraseña"/>
-                    <label for="password"></label>   
-                </div>
-                <a href="#" class="forgot">Términos y condiciones</a>
-                <button type="submit">Registrarse</button>
-            </form>
-        </div>  
+<div class="form-container sign-up-container">
+    <form method="post" action="../../Controllers/Login/Registro.php" id="formularioRegistro">
+        <h1>Crear cuenta</h1>
+        <div class="infield">
+            <input type="text" id="nombre" name="nombre" required placeholder="Nombre" />
+            <label for="nombre"></label>
+        </div>
+        <div class="infield">
+            <input type="email" id="email" name="email" required placeholder="E-mail" />
+            <label for="email"></label>
+        </div>
+        <div class="infield">
+            <input type="password" id="password" name="password" required placeholder="Contraseña" minlength="8" />
+            <label for="password"></label>
+        </div>
+        <div class="checkbox-container">
+            <h6>términos y condiciones</h6>
+            <input type="checkbox" id="termsCheckbox" name="termsCheckbox" required />
+            <label for="termsCheckbox"><a href="#" class="forgot">Términos y condiciones</a>
+        </div>
+        <button type="submit" id="registerButton">Registrarse</button>
+    </form>
+</div>
         <div class="form-container sign-in-container">
             <form method="post" action="../../Controllers/Login/Login.php">
                 <h1>Iniciar sesión</h1>
@@ -181,5 +204,35 @@ $is_logged_in = isset($_SESSION['user_id']) ? true : false;
             })
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const formularioRegistro = document.getElementById("formularioRegistro");
+    const passwordInput = document.getElementById("password");
+    const termsCheckbox = document.getElementById("termsCheckbox");
+    const registerButton = document.getElementById("registerButton");
+
+    formularioRegistro.addEventListener("submit", function (event) {
+        let valid = true;
+
+        // Validación de la contraseña (mínimo 8 caracteres)
+        if (passwordInput.value.length < 8) {
+            alert("La contraseña debe tener al menos 8 caracteres.");
+            valid = false;
+        }
+
+        // Validación del checkbox
+        if (!termsCheckbox.checked) {
+            alert("Debes aceptar los términos y condiciones para registrarte.");
+            valid = false;
+        }
+
+        // Evita el envío del formulario si no es válido
+        if (!valid) {
+            event.preventDefault();
+        }
+    });
+});
+
+    </script>    
 </body>
 </html>
