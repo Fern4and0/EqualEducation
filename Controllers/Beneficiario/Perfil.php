@@ -1,25 +1,39 @@
-<?php 
+<?php
 include '../../DB/db.php'; // Conexión a la base de datos
+session_start(); // Inicia la sesión para acceder a las variables de sesión
 
-// Consulta para obtener datos de ambas tablas
-$query = "
-    SELECT 
-        users.id AS user_id,
-        users.nombre AS nombre_usuario,
-        users.email,
-        users.created_at,
-        beneficiarios.localidad,
-        beneficiarios.ocupacion,
-        beneficiarios.preferencias_educativas,
-        beneficiarios.razon
-    FROM users
-    JOIN beneficiarios ON users.id = beneficiarios.user_id;
-";
+// Verifica si el usuario está autenticado y tiene un user_id en la sesión
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id']; // Obtén el user_id de la sesión
 
-$result = $conn->query($query);
+    // Consulta para obtener los datos del usuario
+    $query = "
+        SELECT 
+            users.id AS user_id,
+            users.nombre AS nombre_usuario,
+            users.email,
+            users.created_at,
+            beneficiarios.localidad,
+            beneficiarios.ocupacion,
+            beneficiarios.preferencias_educativas,
+            beneficiarios.razon
+        FROM users
+        JOIN beneficiarios ON users.id = beneficiarios.user_id
+        WHERE users.id = ?;
+    ";
 
-if (!$result) {
-    die("Error en la consulta: " . $conn->error);
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $user_id); // Se usa el ID del usuario en la consulta
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc(); // Obtiene los datos del beneficiario
+    } else {
+        die("Usuario no encontrado");
+    }
+} else {
+    die("No se ha iniciado sesión o el usuario no está autenticado");
 }
 ?>
 
@@ -28,10 +42,10 @@ if (!$result) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beneficiarios</title>
+    <title>Perfil Beneficiario</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Ajustes al modal para asegurar que el texto sea visible */
+
         .modal-content {
             color: #000000; /* Texto en negro */
         }
@@ -160,7 +174,6 @@ if (!$result) {
 <body>
 <?php include 'navbar.php';?>   
     <div id="container">
-        <?php while ($row = $result->fetch_assoc()): ?>
         <div id="card">
             <h1><?= htmlspecialchars($row['nombre_usuario']); ?></h1>   
             <div class="image-crop">
@@ -182,14 +195,14 @@ if (!$result) {
                     <p><?= htmlspecialchars($row['email']); ?></p>
                 </div>
             </div>
+            <!-- Botón de Editar -->
             <div id="buttons">
                 <button class="btn btn-warning" onclick="abrirModal(<?= $row['user_id']; ?>, '<?= htmlspecialchars($row['nombre_usuario']); ?>', '<?= htmlspecialchars($row['localidad']); ?>', '<?= htmlspecialchars($row['ocupacion']); ?>', '<?= htmlspecialchars($row['preferencias_educativas']); ?>', '<?= htmlspecialchars($row['razon']); ?>')">Editar</button>
-            
+            </div>
         </div>
-        <?php endwhile; ?>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal para Editar Beneficiario -->
     <div class="modal" tabindex="-1" role="dialog" id="editModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -243,9 +256,9 @@ if (!$result) {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        // Función para abrir el modal y cargar los datos del usuario en el formulario
         function abrirModal(user_id, nombre, localidad, ocupacion, preferencias_educativas, razon) {
             $('#editModal').modal('show');
-            $('#nombre').val(nombre);
             $('#localidad').val(localidad);
             $('#ocupacion').val(ocupacion);
             $('#preferencias_educativas').val(preferencias_educativas);
