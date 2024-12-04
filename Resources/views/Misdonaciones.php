@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
 	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
 	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="../css/styles_index.css">
@@ -49,99 +49,90 @@
           </section>
 
           <main class="content">
-            <div class="container-fluid p-0">
-        
-                <h1 class="h3 mb-3"><strong>Mis donaciones</strong></h1>
-        
-                <div class="row">
-                    <div class="col-xl-6 col-xxl-5 d-flex">
-                        <div class="w-100">
-                            <div class="row">
-                                <!-- Donaciones -->
-                                <div class="col-sm-6">
-                                    <div class="card" style="box-shadow: 10px 20px 35px #5557;">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col mt-0">
-                                                    <h5 class="card-title">Total de donaciones</h5>
-                                                </div>
-                                            </div>
-                                            <span style="font-size: 25px;" class="mt-1 mb-3">$<?php echo $totalDonaciones; ?></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Num.Donaciones -->
-                                <div class="col-sm-6">
-                                    <div class="card" style="box-shadow: 10px 20px 35px #5557;">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col mt-0">
-                                                    <h5 class="card-title">Num. Donaciones</h5>
-                                                </div>
-                                            </div>
-                                            <span style="font-size: 25px;" class="mt-1 mb-3"><?php echo $numDonaciones; ?></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Grafica Donaciones -->
-                    <div class="col-sm-6">
-                        <div class="card" style="box-shadow: 10px 20px 35px #5557;">
-                            <div class="card-body">
-                                <canvas id="NumDonaciones"></canvas>
-                            </div>
-                        </div>
-                    </div>
-        
-                </div>
-        
-                
-                <div class="row">
-                    <!-- Tabla mis donaciones -->
-                    <div class="col-xl-6 col-xxl-7" style="top: -300px;">
-                        <div class="card w-100" style="box-shadow: 10px 20px 35px #5557;">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Mis donaciones</h5>
-                            </div>
-                            <table class="table table-hover my-0">
-                                <thead>
-                                    <tr>
-                                        <th class="d-none d-xl-table-cell">Monto</th>
-                                        <th>Fecha</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    if ($tabla->num_rows > 0) {
-                                        while ($row = $tabla->fetch_assoc()) {
-                                            echo '
-                                            <tr>
-                                                <td><span class="badge bg-success">$' . $row["monto"] . '</span></td>
-                                                <td class="d-none d-md-table-cell">' . $row["created_at"] . '</td>
-                                            </tr>';
-                                        }
-                                    } else {
-                                        echo '<tr><td colspan="2">No hay datos disponibles.</td></tr>';
-                                    }
-                                    ?>
-                                </tbody>
-                            </table>
+          <div class="container-fluid p-0">
+            <h1 class="h3 mb-3"><strong>Mis donaciones</strong></h1>
 
+            <div class="row">
+                <!-- Parte izquierda -->
+                <div class="col-lg-6">
+                    <!-- Tarjetas -->
+                    <div class="row mb-3">
+                        <!-- Total de Donaciones -->
+                        <div class="col-6">
+                            <div class="card" style="box-shadow: 10px 20px 35px #5557;">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Total de donaciones</h5>
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 25px;" class="mt-1 mb-3">$<?php echo $totalDonaciones; ?></span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <!-- Grafica Donaciones -->
-                    <div class="col-sm-6" style="display: block; top: -40px;">
-                        <div class="card" style="box-shadow: 10px 20px 35px #5557;">
-                            <div class="card-body">
-                                <canvas id="Donaciones"></canvas>
+                        <!-- Num. Donaciones -->
+                        <div class="col-6">
+                            <div class="card" style="box-shadow: 10px 20px 35px #5557;">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col mt-0">
+                                            <h5 class="card-title">Num. Donaciones</h5>
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 25px;" class="mt-1 mb-3"><?php echo $numDonaciones; ?></span>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Tabla Mis Donaciones -->
+                    <div class="card w-100" style="box-shadow: 10px 20px 35px #5557;">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Mis donaciones</h5>
+                        </div>
+                        <table class="table table-hover my-0">
+                            <thead>
+                                <tr>
+                                    <th class="d-none d-xl-table-cell">Monto</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if ($tabla->num_rows > 0) {
+                                    while ($row = $tabla->fetch_assoc()) {
+                                        echo '
+                                        <tr>
+                                            <td><span class="badge bg-success">$' . $row["monto"] . '</span></td>
+                                            <td class="d-none d-md-table-cell">' . $row["created_at"] . '</td>
+                                        </tr>';
+                                    }
+                                } else {
+                                    echo '<tr><td colspan="2">No hay datos disponibles.</td></tr>';
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-        
+
+                <!-- Parte derecha -->
+                <div class="col-lg-6">
+                    <!-- Gráfica Num. Donaciones -->
+                    <div class="card mb-3" style="box-shadow: 10px 20px 35px #5557;">
+                        <div class="card-body">
+                            <canvas id="NumDonaciones"></canvas>
+                        </div>
+                    </div>
+                    <!-- Gráfica Donaciones -->
+                    <div class="card" style="box-shadow: 10px 20px 35px #5557;">
+                        <div class="card-body">
+                            <canvas id="Donaciones"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+
         </main>
         <footer class="section footer-minimal context-dark">
             <div class="container wow-outer">
@@ -150,7 +141,7 @@
                   <div class="col-12"><a href="../views/index.php"><img src="../Images/logo.png" alt="" width="207" height="51"/></a></div>
                   <div class="col-12">
                     <ul class="footer-minimal-nav">
-                      <li><a href="../views/nosotros.html">Equipo</a></li>
+                      <li><a href="../views/nosotros.php">Equipo</a></li>
                       <li><a href="../views/política_privacidad.html">Política de privacidad</a></li>
                       <li><a href="../views/contacto.html">Contacto</a></li>
                     </ul>
@@ -225,6 +216,7 @@
         }
     });
 </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="../js/core.min.js"></script>
     <script src="../js/scriptt.js"></script>
 </body>
