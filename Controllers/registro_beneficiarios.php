@@ -22,14 +22,10 @@ if (isset($_SESSION['user_id'])) {
     $localidad = $_POST['localidad'];
     $preferencias_educativas = $_POST['preferencias_educativas'];
 
-        // 1. Actualizar el rol del usuario a 3 (Beneficiario)
+    // 1. Actualizar el rol del usuario a 3 (Beneficiario)
     $rol_id = 3;  // Asignar el valor del rol a una variable
     $stmt_update_rol = $conn->prepare("UPDATE users SET id_rol = ? WHERE id = ?");
     $stmt_update_rol->bind_param("ii", $rol_id, $user_id);  // Ahora pasas la variable $rol_id
-
-if (!$stmt_update_rol->execute()) {
-    echo "Error al actualizar el rol del usuario: " . $stmt_update_rol->error;
-}
 
     if (!$stmt_update_rol->execute()) {
         echo "Error al actualizar el rol del usuario: " . $stmt_update_rol->error;
@@ -40,7 +36,8 @@ if (!$stmt_update_rol->execute()) {
     $stmt_beneficiarios->bind_param("issss", $user_id, $ocupacion, $razon, $localidad, $preferencias_educativas);
 
     if ($stmt_beneficiarios->execute()) {
-        echo "Datos del beneficiario guardados correctamente.";
+        session_destroy(); // Cerrar la sesión
+        header("Location: ../Resources/views/login.php");  // Redirigir al login
     } else {
         echo "Error al guardar los datos del beneficiario: " . $stmt_beneficiarios->error;
     }
@@ -49,7 +46,9 @@ if (!$stmt_update_rol->execute()) {
     $stmt_update_rol->close();
     $stmt_beneficiarios->close();
 } else {
-    echo "No hay sesión activa. El usuario no está registrado.";
+    // Si no hay sesión activa, redirigir al login.php
+    header("Location: ../Resources/views/login.php");  // Redirigir al login
+    exit();  // Detener la ejecución
 }
 
 // Cerrar la conexión
