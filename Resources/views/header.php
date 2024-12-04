@@ -58,9 +58,13 @@ session_start();
                 <!-- RD Navbar Nav-->
                 <ul class="rd-navbar-nav">
                   <li class="rd-nav-item"><a class="rd-nav-link" href="../views/index.php">Inicio</a></li>
-                  <li class="rd-nav-item"><a class="rd-nav-link" href="../views/programas.php">Programas</a></li>
+                  <?php if (isset($_SESSION['user_id'])): ?>
+                    <li class="rd-nav-item"><a class="rd-nav-link" href="../views/programas.php">Programas</a></li>
+                  <?php endif; ?>
                   <li class="rd-nav-item"><a class="rd-nav-link" href="../views/nosotros.php">Sobre nosotros</a></li>
-                  <li class="rd-nav-item"><a class="rd-nav-link" href="../views/Modals.php">Unete</a></li>
+                  <?php if (isset($_SESSION['user_id'])): ?>
+                    <li class="rd-nav-item"><a class="rd-nav-link" href="../views/Modals.php">Únete</a></li>
+                  <?php endif; ?>
                   <?php if (!isset($_SESSION['user_id'])): ?>
                     <li class="rd-nav-item"><a class="rd-nav-link" href="../views/login.php">Iniciar sesión</a></li>
                   <?php else: ?>
@@ -76,11 +80,10 @@ session_start();
                       <?php
                       // Obtener el ID del rol del usuario desde la sesión
                       $role_id = $_SESSION['user_rol'];
-                        echo $role_id;
                       // Redirigir al usuario a su Dashboard correspondiente
                       switch ($role_id) {
                         case 1:
-                            $dashboard_url = "/EqualEducation/Controllers/Administrador/Layout/header.php";
+                            $dashboard_url = "/EqualEducation/Controllers/Administrador/Administrador-Dashboard.php";
                             break;
                         case 2:
                             $dashboard_url = "/EqualEducation/Controllers/Coordinador/Cordi-Dashboard.php";

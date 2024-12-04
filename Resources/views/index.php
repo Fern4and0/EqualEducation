@@ -88,8 +88,8 @@
       <div class="row justify-content-center text-center">
         <div class="col-md-9 col-lg-7 wow-outer">
           <div class="wow slideInDown">
-            <h3>Últimas causas</h3>
-            <p>En Equal Education, existen diversas causas y proyectos benéficos en los que siempre puedes participar.</p>
+            <h3>Programas Educativos</h3>
+            <p>En Equal Education apoyamos con programas educativos a personas en situación de rezago educativo.</p>
           </div>
         </div>
       </div>
@@ -99,8 +99,8 @@
             <article class="box-causes">
               <div class="box-causes-img"><img src="../../Public/image/C1.jpg" alt="" width="372" height="396"/><a class="button button-sm button-primary" href="../views/donaciones.php">Donate</a>
               </div>
-              <h4 class="font-weight-medium"><a>Becas para jovenes</a></h4>
-              <p class="box-causes-donate"><span class="box-causes-donate-complete">$0.00</span> de <span>$20,000</span> pesos recaudados para becas dirigidas hacia jovenes en situación de resago educativo
+              <h4 class="font-weight-medium"><a>Programas para jovenes y niños</a></h4>
+              <p class="box-causes-donate"><span class="box-causes-donate-complete"></span><span>En Equal Education creamos programas para jovenes y niños en situación de rezago educativo</span>
               </p>
             </article>
           </div>
@@ -110,8 +110,8 @@
             <article class="box-causes">
               <div class="box-causes-img"><img src="../../Public/image/C2.jpg" alt="" width="372" height="396"/><a class="button button-sm button-primary" href="../views/donaciones.php">Donate</a>
               </div>
-              <h4 class="font-weight-medium"><a>Apoyo económico a niños</a></h4>
-              <p class="box-causes-donate"><span class="box-causes-donate-complete">$0.00</span> de <span>$10,000</span> pesos recaudados para apoyar económicamente a niños necesitados
+              <h4 class="font-weight-medium"><a>Programas de educación básica</a></h4>
+              <p class="box-causes-donate"><span class="box-causes-donate-complete"></span><span>Creamos programas educativos donde se imparte la alfabetización, educación primaria y educación secundaria.</span>
               </p>
             </article>
           </div>
@@ -121,8 +121,8 @@
             <article class="box-causes">
               <div class="box-causes-img"><img src="../../Public/image/C3.jpg" alt="" width="372" height="396"/><a class="button button-sm button-primary" href="../views/donaciones.php">Donate</a>
               </div>
-              <h4 class="font-weight-medium"><a>Apoyo a programas educativos</a></h4>
-              <p class="box-causes-donate"><span class="box-causes-donate-complete">$0.00</span> de <span>$20,000</span> pesos recaudados para apoyar económicamente a programas educativos
+              <h4 class="font-weight-medium"><a>Programas Presenciales</a></h4>
+              <p class="box-causes-donate"><span class="box-causes-donate-complete"></span><span>Nuestros programas educativos ofrecen espacios físicos de  aprendizaje adaptados a las necesidades de quienes buscan retomar o completar su formación académica.</span>
               </p>
             </article>
           </div>
@@ -138,7 +138,7 @@
           <div class="col-12"><a href="../views/index.php"><img src="../Images/logo.png" alt="" width="207" height="51"/></a></div>
           <div class="col-12">
             <ul class="footer-minimal-nav">
-              <li><a href="../views/nosotros.html">Equipo</a></li>
+              <li><a href="../views/nosotros.php">Equipo</a></li>
               <li><a href="../views/política_privacidad.html">Política de privacidad</a></li>
               <li><a href="../views/contacto.html">Contacto</a></li>
             </ul>

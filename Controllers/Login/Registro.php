@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['registered_password'] = $_POST['password']; // Guarda la contraseña registrada en la sesión
 
         // Redirigir al dashboard
-        header('Location: ../../inicio.php');
+        header('Location: ../../Resources/views/login.php');
         exit();
     } else {
         // Muestra un mensaje de error si la consulta falló

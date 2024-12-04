@@ -108,7 +108,7 @@
               <div class="col-12"><a href="../views/index.php"><img src="../Images/logo.png" alt="" width="207" height="51"/></a></div>
               <div class="col-12">
                 <ul class="footer-minimal-nav">
-                  <li><a href="../views/nosotros.html">Equipo</a></li>
+                  <li><a href="../views/nosotros.php">Equipo</a></li>
                   <li><a href="../views/política_privacidad.html">Política de privacidad</a></li>
                   <li><a href="../views/contacto.html">Contacto</a></li>
                 </ul>

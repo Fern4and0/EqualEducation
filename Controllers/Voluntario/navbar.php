@@ -16,7 +16,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Inicio</a>
+                <a class="nav-link" href="../../inicio.php">Inicio</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="Actividades.php">Actividades</a>
@@ -24,16 +24,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="Perfil.php">Perfil</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Donar</a>
-                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#configModal">Opciones</a>
-                        <a class="dropdown-item" href="#">Cerrar Sesión</a>
+                        <a class="dropdown-item" href="../Login/Logout.php">Cerrar Sesión</a>
                     </div>
                 </li>
             </ul>
