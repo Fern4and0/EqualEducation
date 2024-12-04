@@ -17,7 +17,7 @@
     <div class="page">
     <?php include('header.php');
     $user_id = $_SESSION['user_id'];
-    echo $user_id;?>
+    ?>
       <section class="parallax-container" data-parallax-img="../../Public/image/imgDonation.jpg">
         <div class="parallax-content breadcrumbs-custom context-dark">
           <div class="container">

@@ -13,7 +13,7 @@ include '../../DB/db.php'; // Incluye la conexión a la base de datos
 $sqlIngresos = "SELECT COALESCE(SUM(monto), 0) AS total_ingresos FROM donaciones";
 $resultIngresos = $conn->query($sqlIngresos); // Ejecuta la consulta
 $totalIngresos = $resultIngresos->fetch_assoc()['total_ingresos']; // Obtiene el resultado de la consulta
-$sqlIngresosSemana = "SELECT COALESCE(SUM(monto), 0) AS total_ingresossem FROM donaciones WHERE created_at >= '2024-11-20' and created_at <= '2024-11-27'";
+$sqlIngresosSemana = "SELECT COALESCE(SUM(monto), 0) AS total_ingresossem FROM donaciones WHERE created_at >= '2024-12-01' and created_at <= '2024-12-07'";
 $resultIngresosSemana = $conn->query($sqlIngresosSemana); // Ejecuta la consulta
 $totalIngresosSemana = $resultIngresosSemana->fetch_assoc()['total_ingresossem']; // Obtiene el resultado de la consulta
 
@@ -21,14 +21,14 @@ $totalIngresosSemana = $resultIngresosSemana->fetch_assoc()['total_ingresossem']
 $sqlDonantes = "SELECT COUNT(DISTINCT donante_id) as nuevos_donantes FROM donaciones";
 $resultDonantes = $conn->query($sqlDonantes); // Ejecuta la consulta
 $nuevosDonantes = $resultDonantes->fetch_assoc()['nuevos_donantes'];
-$sqlDonantesSemana = "SELECT COUNT(DISTINCT donante_id) as nuevos_donantessem FROM donaciones WHERE created_at >= '2024-11-20' and created_at <= '2024-11-27'";
+$sqlDonantesSemana = "SELECT COUNT(DISTINCT donante_id) as nuevos_donantessem FROM donaciones WHERE created_at >= '2024-12-01' and created_at <= '2024-12-07'";
 $resultDonantesSemana = $conn->query($sqlDonantesSemana); // Ejecuta la consulta
 $nuevosDonantesSemana = $resultDonantesSemana->fetch_assoc()['nuevos_donantessem'];
 
 $sqlDonaciones = "SELECT COUNT(monto) as nuevas_donaciones FROM donaciones";
 $resultDonaciones = $conn->query($sqlDonaciones); // Ejecuta la consulta
 $nuevasDonaciones = $resultDonaciones->fetch_assoc()['nuevas_donaciones'];
-$sqlDonacionesSemana = "SELECT COUNT(monto) as nuevas_donacionessem FROM donaciones WHERE created_at >= '2024-11-20' and created_at <= '2024-11-27'";
+$sqlDonacionesSemana = "SELECT COUNT(monto) as nuevas_donacionessem FROM donaciones WHERE created_at >= '2024-12-01' and created_at <= '2024-12-07'";
 $resultDonacionesSemana = $conn->query($sqlDonacionesSemana); // Ejecuta la consulta
 $nuevasDonacionesSemana = $resultDonacionesSemana->fetch_assoc()['nuevas_donacionessem'];
 
@@ -159,18 +159,18 @@ $conn->close(); // Cierra la conexión a la base de datos
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <?php
-                                if ($consultaTabla->num_rows > 0) {
-                                    while ($row = $consultaTabla->fetch_assoc()) {
-                                        echo '
+                            <?php
+                            if ($consultaTabla->num_rows > 0) {
+                                while ($row = $consultaTabla->fetch_assoc()) {
+                                    echo '
+                                    <tr>
                                         <td>' . $row["nombre_usuario"] . '</td>
                                         <td><span class="badge bg-success">$' . $row["monto_donacion"] . '</span></td>
-                                        <td class="d-none d-md-table-cell">' . $row["fecha_donacion"] . '</td>';
-                                    }
+                                        <td class="d-none d-md-table-cell">' . $row["fecha_donacion"] . '</td>
+                                    </tr>';
                                 }
-                                ?>
-                            </tr>
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -209,7 +209,7 @@ $conn->close(); // Cierra la conexión a la base de datos
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'], // Etiquetas
+                labels: ['Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre','Diciembre'], // Etiquetas
                 datasets: [{
                     label: 'Ingresos',
                     data: [500,300,800,100,0,<?php echo $totalIngresos;?>], // Datos aleatorios
@@ -241,7 +241,7 @@ $conn->close(); // Cierra la conexión a la base de datos
         new Chart(ctx2, {
             type: 'bar',
             data: {
-                labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'], // Etiquetas
+                labels: ['Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre','Diciembre'], // Etiquetas
                 datasets: [{
                     label: 'Nuevos donantes',
                     data: [100,50,60,80,20,<?php echo $nuevosDonantes;?>], // Datos aleatorios
