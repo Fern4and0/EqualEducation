@@ -61,7 +61,7 @@ $fecha_actual = date('Y-m-d');
     </style>
 </head>
 <body>
-<?php //include 'layout/header.php'; ?>
+<?php include 'layout/header.php'; ?>
 <div class="contenedor-programas">
     <?php
         if ($consulta->num_rows > 0) {
@@ -78,9 +78,9 @@ $fecha_actual = date('Y-m-d');
                             'malo' => $fila['malo']
                         ];
                     }
-                    print_r($resultados); // Muestra el array con los resultados
+                     // Muestra el array con los resultados
                 } else {
-                    echo "No se encontraron resultados.";
+                    
                 }
 
                 $consulta2 = "SELECT si, no FROM respuestas WHERE id_programa = $id AND id_pregunta = 2";
@@ -96,7 +96,7 @@ $fecha_actual = date('Y-m-d');
                     }
                     
                 } else {
-                    echo "No se encontraron resultados.";
+                    
                 }
 
                 $consulta3 = "SELECT bueno, regular, malo FROM respuestas WHERE id_programa = $id AND id_pregunta = 3";
@@ -110,9 +110,9 @@ $fecha_actual = date('Y-m-d');
                             'malo' => $fila3['malo']
                         ];
                     }
-                    print_r($resultados); // Muestra el array con los resultados
+                     // Muestra el array con los resultados
                 } else {
-                    echo "No se encontraron resultados.";
+                    
                 }
 
                 $consulta4 = "SELECT bueno, regular, malo FROM respuestas WHERE id_programa = $id AND id_pregunta = 4";
@@ -126,9 +126,9 @@ $fecha_actual = date('Y-m-d');
                             'malo' => $fila4['malo']
                         ];
                     }
-                    print_r($resultados); // Muestra el array con los resultados
+                     // Muestra el array con los resultados
                 } else {
-                    echo "No se encontraron resultados.";
+                    
                 }
 
                 $consulta5 = "SELECT si, no FROM respuestas WHERE id_programa = $id AND id_pregunta = 5";
@@ -142,9 +142,9 @@ $fecha_actual = date('Y-m-d');
                             'malo' => $fila5['malo']
                         ];
                     }
-                    print_r($resultados); // Muestra el array con los resultados
+                     // Muestra el array con los resultados
                 } else {
-                    echo "No se encontraron resultados.";
+                    
                 }
 
                 $consulta6 = "SELECT si, no FROM respuestas WHERE id_programa = $id AND id_pregunta = 6";
@@ -158,9 +158,9 @@ $fecha_actual = date('Y-m-d');
                             'malo' => $fila6['malo']
                         ];
                     }
-                    print_r($resultados); // Muestra el array con los resultados
+                     // Muestra el array con los resultados
                 } else {
-                    echo "No se encontraron resultados.";
+                    
                 }
 
                 $consulta7 = "SELECT si, no FROM respuestas WHERE id_programa = $id AND id_pregunta = 7";
@@ -174,9 +174,9 @@ $fecha_actual = date('Y-m-d');
                             'malo' => $fila7['malo']
                         ];
                     }
-                    print_r($resultados); // Muestra el array con los resultados
+                     // Muestra el array con los resultados
                 } else {
-                    echo "No se encontraron resultados.";
+                    
                 }
 
                 $consulta8 = "SELECT si, no FROM respuestas WHERE id_programa = $id AND id_pregunta = 8";
@@ -190,9 +190,9 @@ $fecha_actual = date('Y-m-d');
                             'malo' => $fila8['malo']
                         ];
                     }
-                    print_r($resultados); // Muestra el array con los resultados
+                     // Muestra el array con los resultados
                 } else {
-                    echo "No se encontraron resultados.";
+                    
                 }
 
                 $consulta9 = "SELECT bueno, regular, malo FROM respuestas WHERE id_programa = $id AND id_pregunta = 9";
@@ -206,9 +206,9 @@ $fecha_actual = date('Y-m-d');
                             'malo' => $fila9['malo']
                         ];
                     }
-                    print_r($resultados); // Muestra el array con los resultados
+                     // Muestra el array con los resultados
                 } else {
-                    echo "No se encontraron resultados.";
+                    
                 }
                 echo '
                 <div class="programa">
