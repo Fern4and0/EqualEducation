@@ -126,7 +126,7 @@
           <div class="row no-gutters">
             <div class="col-md-6 col-lg-12">
               <div class="team-classic">
-                <div class="team-classic-figure"><img src="#" alt="" width="200" height="250"/>
+                <div class="team-classic-figure"><img src="../../Public/image/LUIS MENDOZA.jpg" alt="" width="200" height="250"/>
                 </div>
                 <div class="team-classic-caption">
                   <h4><a class="team-name" href="#">Fernando Mendoza</a></h4>
@@ -136,7 +136,7 @@
             </div>
             <div class="col-md-6 col-lg-4">
               <div class="team-classic">
-                <div class="team-classic-figure"><img src="images/team-classic-2-390x252.jpg" alt="" width="200" height="250"/>
+                <div class="team-classic-figure"><img src="../../Public/image/8004-uCol.jpg" alt="" width="200" height="250"/>
                 </div>
                 <div class="team-classic-caption">
                   <h4><a class="team-name" href="#">Adriel Gúzman</a></h4>
@@ -146,7 +146,7 @@
             </div>
             <div class="col-md-6 col-lg-4">
               <div class="team-classic">
-                <div class="team-classic-figure"><img src="images/team-classic-3-390x252.jpg" alt="" width="200" height="250"/>
+                <div class="team-classic-figure"><img src="../../Public/image/RAE.JPG" alt="" width="200" height="250"/>
                 </div>
                 <div class="team-classic-caption">
                   <h4><a class="team-name" href="#">Antonio Rodríguez</a></h4>
