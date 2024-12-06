@@ -69,7 +69,7 @@ $fecha_actual = date('Y-m-d');
             // Mostrar los productos en divs
             while($row = $consulta->fetch_assoc()) {
                 $id = $row['id'];
-                $sql2 = "SELECT id, nombre, descripcion, fecha, hora, responsable_id FROM actividades WHERE programa_id = $id"; //cambiar el 2 por el id del coordinador
+                $sql2 = "SELECT id, nombre, descripcion, fecha, hora, user_id FROM actividades WHERE programa_id = $id"; //cambiar el 2 por el id del coordinador
                 $sqlActividades = $conn->query($sql2);
                 echo '
                 <div class="programa">
@@ -152,7 +152,7 @@ $fecha_actual = date('Y-m-d');
                             ';}
                             echo'
                             <div class="eliminar-footer">
-                                <button id="volun" type="submit">Eliminar</button>
+                                <button id="volun" type="submit">Asignar</button>
                                 <button type="button" id="close-volun-'.$idAct.'">Cancelar</button>
                             </div>
                             </form>
@@ -168,6 +168,7 @@ $fecha_actual = date('Y-m-d');
             <div class="eliminarContent">
                 <form action="eliminarPrograma.php" method="POST">
                 <input type="hidden" name="id" value="'.$id.'">
+                <input type="hidden" name="user_id" value="'.$user_id.'">
                 <span>¿Estas seguro que quieres eliminar este programa?</span>
                 <div class="eliminar-footer">
                     <button id="eliminar" type="submit">Eliminar</button>
@@ -182,7 +183,7 @@ $fecha_actual = date('Y-m-d');
                 <form action="editarPrograma.php" method="POST" enctype="multipart/form-data">
                     <div class="form-floating mb-3">
                         <input type="hidden" name="id_programa" value="'.$id.'">
-                        <input type="hidden" name="user_id" value="2"> <!-- Cambiar el user_id -->
+                        <input type="hidden" name="user_id" value="'.$user_id.'"> <!-- Cambiar el user_id -->
                         <input class="form-control" id="floatingInput" name="nombre" placeholder="name@example.com" required>
                         <label for="floatingInput">Titulo</label>
                     </div>

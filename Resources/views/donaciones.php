@@ -15,7 +15,9 @@
   </head>
   <body>
     <div class="page">
-    <?php include('header.php');?>
+    <?php include('header.php');
+    $user_id = $_SESSION['user_id'];
+    ?>
       <section class="parallax-container" data-parallax-img="../../Public/image/imgDonation.jpg">
         <div class="parallax-content breadcrumbs-custom context-dark">
           <div class="container">
@@ -60,6 +62,9 @@
             </style>
             <div id="donate-button-container" class="text-center mt-auto">
                 <div id="donate-button"></div>
+                <form id="hidden-form" action="../../Controllers/detallesDonacion.php" method="POST" style="display: none;">
+                  <input type="hidden" name="donante_id" id="donante_id" value="<?php echo $user_id; ?>">
+                </form>
                 <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
                 <script>
                 PayPal.Donation.Button({
@@ -72,19 +77,23 @@
                 },
                 onComplete: function(detalles){
                     console.log(detalles);
-                    let xhr = new XMLHttpRequest();
-                    xhr.open("POST", "../../Controllers/detallesDonacion.php", true);
-                    xhr.setRequestHeader("Content-Type", "application/json");
 
-                    // Enviar los datos en formato JSON
-                    xhr.send(JSON.stringify(detalles));
+                    // Incluye el ID del donante en los detalles de la donación
+                detalles.donante_id = document.getElementById('donante_id').value;
 
-                    // Manejar la respuesta
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", "../../Controllers/detallesDonacion.php", true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+
+                // Enviar los datos en formato JSON
+                xhr.send(JSON.stringify(detalles));
+
+                // Manejar la respuesta
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
                         console.log(xhr.responseText);  // Respuesta del servidor
-                        }
-                    };
+                    }
+                };
                 }
                 }).render('#donate-button');
                 //convertir los detalles de la donacion a json
@@ -99,7 +108,7 @@
               <div class="col-12"><a href="../views/index.php"><img src="../Images/logo.png" alt="" width="207" height="51"/></a></div>
               <div class="col-12">
                 <ul class="footer-minimal-nav">
-                  <li><a href="../views/nosotros.php">Equipo</a></li>
+                  <li><a href="../views/nosotros.html">Equipo</a></li>
                   <li><a href="../views/política_privacidad.html">Política de privacidad</a></li>
                   <li><a href="../views/contacto.html">Contacto</a></li>
                 </ul>

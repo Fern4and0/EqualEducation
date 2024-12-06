@@ -79,7 +79,7 @@ $conn->close(); // Cierra la conexión a la base de datos
                         <!-- Tarjetas -->
                         <div class="row">
                             <div class="col-sm-6">
-                                <div class="card">
+                                <div class="card" style="box-shadow: 10px 20px 35px #5557;">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col mt-0">
@@ -94,7 +94,7 @@ $conn->close(); // Cierra la conexión a la base de datos
                                     </div>
                                 </div>
 
-                                <div class="card">
+                                <div class="card" style="box-shadow: 10px 20px 35px #5557;">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col mt-0">
@@ -111,7 +111,7 @@ $conn->close(); // Cierra la conexión a la base de datos
                             </div>
 
                             <div class="col-sm-6">
-                                <div class="card">
+                                <div class="card" style="box-shadow: 10px 20px 35px #5557;">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col mt-0">
@@ -126,7 +126,7 @@ $conn->close(); // Cierra la conexión a la base de datos
                                     </div>
                                 </div>
 
-                                <div class="card">
+                                <div class="card" style="box-shadow: 10px 20px 35px #5557;">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col mt-0">
@@ -144,7 +144,7 @@ $conn->close(); // Cierra la conexión a la base de datos
                         </div>
 
                         <!-- Tabla -->
-                        <div class="card flex-fill w-100 mt-3">
+                        <div class="card flex-fill w-100 mt-3" style="box-shadow: 10px 20px 35px #5557;">
                             <div class="card-header">
                                 <h5 class="card-title mb-0">Donaciones</h5>
                             </div>
@@ -157,18 +157,18 @@ $conn->close(); // Cierra la conexión a la base de datos
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <?php
-                                        if ($consultaTabla->num_rows > 0) {
-                                            while ($row = $consultaTabla->fetch_assoc()) {
-                                                echo '
+                                    <?php
+                                    if ($consultaTabla->num_rows > 0) {
+                                        while ($row = $consultaTabla->fetch_assoc()) {
+                                            echo '
+                                            <tr>
                                                 <td>' . $row["nombre_usuario"] . '</td>
                                                 <td><span class="badge bg-success">$' . $row["monto_donacion"] . '</span></td>
-                                                <td class="d-none d-md-table-cell">' . $row["fecha_donacion"] . '</td>';
-                                            }
+                                                <td class="d-none d-md-table-cell">' . $row["fecha_donacion"] . '</td>
+                                            </tr>';
                                         }
-                                        ?>
-                                    </tr>
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -178,7 +178,7 @@ $conn->close(); // Cierra la conexión a la base de datos
                     <div class="col-md-6">
                         <div class="row">
                             <div class="col-12">
-                                <div class="card">
+                                <div class="card" style="box-shadow: 10px 20px 35px #5557;">
                                     <div class="card-body">
                                         <h5 class="card-title">Ingresos en los ultimos meses</h5>
                                         <canvas id="lineChart" width="400" height="200"></canvas>
@@ -186,7 +186,7 @@ $conn->close(); // Cierra la conexión a la base de datos
                                 </div>
                             </div>
                             <div class="col-12 mt-3">
-                                <div class="card">
+                                <div class="card" style="box-shadow: 10px 20px 35px #5557;">
                                     <div class="card-body">
                                         <h5 class="card-title">Nuevos donantes en los ultimos meses</h5>
                                         <canvas id="barChart" width="400" height="200"></canvas>

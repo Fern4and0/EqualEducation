@@ -28,6 +28,7 @@
 
         $sql = "SELECT id, nombre, descripcion ,fecha_ini, fecha_fin, foto, ubicacion, cupo_maximo, tipo FROM programas ORDER BY fecha_ini ASC";
         $consulta = $conn->query($sql);
+        echo $user_id;
         ?>
 
       <section class="parallax-container" data-parallax-img="../../Public/image/img4.jpg">
