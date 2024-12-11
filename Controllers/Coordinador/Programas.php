@@ -1,6 +1,4 @@
 <?php
-// Controllers/Coordinador/Cordi-Dashboard.php
-
 session_start(); // Inicia la sesión
 
 // Verifica si el usuario ha iniciado sesión
@@ -30,10 +28,56 @@ $sql = "SELECT id, nombre, descripcion, fecha_ini, fecha_fin, foto, ubicacion, c
 $consulta = $conn->query($sql);
 // Cerrar la conexión a la base de datos
 $conn->close(); // Cierra la conexión a la base de datos
+
+// Verifica si la traducción está activada desde administradores.php
+$translationEnabled = true; // Cambia esto según tu lógica para verificar si la traducción está activada
+
+if ($translationEnabled) {
+    // URL de la API de Google Translate
+    $url = "https://translation.googleapis.com/language/translate/v2";
+    $apiKey = "YOUR_GOOGLE_API_KEY"; // Reemplaza con tu clave de API de Google
+
+    // Texto a traducir (contenido de la página)
+    ob_start();
+    include('layout/header.php');
+    $pageContent = ob_get_clean();
+
+    // Datos para la solicitud POST
+    $data = [
+        'q' => $pageContent,
+        'target' => 'en',
+        'format' => 'html',
+        'source' => 'es',
+        'key' => $apiKey
+    ];
+
+    // Configuración de la solicitud cURL
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Ejecuta la solicitud y obtiene la respuesta
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    // Decodifica la respuesta JSON
+    $responseDecoded = json_decode($response, true);
+
+    // Verifica si la traducción fue exitosa
+    if (isset($responseDecoded['data']['translations'][0]['translatedText'])) {
+        $translatedContent = $responseDecoded['data']['translations'][0]['translatedText'];
+        echo $translatedContent;
+    } else {
+        echo "Error en la traducción.";
+    }
+} else {
+    include('layout/header.php');
+}
 ?>
 
 <!DOCTYPE html>
-<html lang="en"></html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,121 +103,120 @@ $conn->close(); // Cierra la conexión a la base de datos
 <body>
 <?php include('layout/header.php') ?>
 
-
-    <div class="contenedor-programas">
+<div class="contenedor-programas">
     <?php
-        if ($consulta->num_rows > 0) {
-            // Mostrar los productos en divs
-            while($row = $consulta->fetch_assoc()) {
-                $id = $row['id'];
-                echo '
-                <div class="programa">
-                    <img src="../../Public/image/img2.jpeg" alt="Imagen del programa">
+    if ($consulta->num_rows > 0) {
+        // Mostrar los productos en divs
+        while($row = $consulta->fetch_assoc()) {
+            $id = $row['id'];
+            echo '
+            <div class="programa">
+                <img src="../../Public/image/img2.jpeg" alt="Imagen del programa">
                 <div class="programa-contenido">
-                <h3>' . $row["nombre"] . '</h3>
-                <p>' . $row["descripcion"] . '</p>
-                <select name="status" id="status" required>
-                    <option value="inac">Inactivo</option>
-                    <option value="Enprog">En progreso</option>
-                    <option value="Fin">Finalizado</option>
-                </select>
-                <div class="acciones">  
-                    <button class="btn-ver">Ver cronograma</button>
-                    <button id="open-editar-'.$id.'" class="btn-editar" onClick="editarPrgm('.$id.')">Editar</button>
-                    <button id="open-eliminar-'.$id.'" class="btn-eliminar" onClick="eliminarPrgm('.$id.')">Eliminar</button>
+                    <h3>' . $row["nombre"] . '</h3>
+                    <p>' . $row["descripcion"] . '</p>
+                    <select name="status" id="status" required>
+                        <option value="inac">Inactivo</option>
+                        <option value="Enprog">En progreso</option>
+                        <option value="Fin">Finalizado</option>
+                    </select>
+                    <div class="acciones">  
+                        <button class="btn-ver">Ver cronograma</button>
+                        <button id="open-editar-'.$id.'" class="btn-editar" onClick="editarPrgm('.$id.')">Editar</button>
+                        <button id="open-eliminar-'.$id.'" class="btn-eliminar" onClick="eliminarPrgm('.$id.')">Eliminar</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-
-        <dialog id="modal-eliminar-'.$id.'" class="modalEliminar">
-            <div class="eliminarContent">
-                <form action="eliminarPrograma.php" method="POST">
-                <input type="hidden" name="id" value="'.$id.'">
-                <input type="hidden" name="user_id" value="2"> <!-- Cambiar el user_id -->
-                <span>¿Estas seguro que quieres eliminar este programa?</span>
-                <div class="eliminar-footer">
-                    <button id="eliminar" type="submit">Eliminar</button>
-                    <button type="button" id="close-eliminar-'.$id.'">Cancelar</button>
-                </div>
-                </form>
-            </div>
-        </dialog>
-        <dialog id="modal-editar-'.$id.'" class="modalEditar">
-            <div class="editarContent">
-                <h2>Editar programa</h2>
-                <form action="editarPrograma.php" method="POST">
-                    <div class="form-floating mb-3">
+            <dialog id="modal-eliminar-'.$id.'" class="modalEliminar">
+                <div class="eliminarContent">
+                    <form action="eliminarPrograma.php" method="POST">
                         <input type="hidden" name="id" value="'.$id.'">
                         <input type="hidden" name="user_id" value="2"> <!-- Cambiar el user_id -->
-                        <input class="form-control" id="floatingInput" name="nombre" placeholder="name@example.com">
-                        <label for="floatingInput">Titulo</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="floatingInput" name="fecha_ini" placeholder="name@example.com">
-                        <label for="floatingInput">Fecha de inicio</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="floatingInput" name="fecha_fin" placeholder="name@example.com">
-                        <label for="floatingInput">Fecha de conclusion</label>
-                    </div>
-                    <div class="form-floating">
-                        <textarea class="form-control" name="descripcion" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
-                        <label for="floatingTextarea">Descripción</label>
-                    </div>
-                    <!-- Botones para crear o cancelar -->
-                    <div class="modal-footer">
-                        <button id="crear" type="submit">Editar</button>
-                        <button type="button" id="close-editar-'.$id.'">Cancelar</button>
-                    </div>
-                </form>
-            </div>
-        </dialog>';
-            }
-        } else {
-            // Si no hay resultados
-            echo "<p>No hay programas disponibles</p>";
+                        <span>¿Estas seguro que quieres eliminar este programa?</span>
+                        <div class="eliminar-footer">
+                            <button id="eliminar" type="submit">Eliminar</button>
+                            <button type="button" id="close-eliminar-'.$id.'">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
+            <dialog id="modal-editar-'.$id.'" class="modalEditar">
+                <div class="editarContent">
+                    <h2>Editar programa</h2>
+                    <form action="editarPrograma.php" method="POST">
+                        <div class="form-floating mb-3">
+                            <input type="hidden" name="id" value="'.$id.'">
+                            <input type="hidden" name="user_id" value="2"> <!-- Cambiar el user_id -->
+                            <input class="form-control" id="floatingInput" name="nombre" placeholder="name@example.com">
+                            <label for="floatingInput">Titulo</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="floatingInput" name="fecha_ini" placeholder="name@example.com">
+                            <label for="floatingInput">Fecha de inicio</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="floatingInput" name="fecha_fin" placeholder="name@example.com">
+                            <label for="floatingInput">Fecha de conclusion</label>
+                        </div>
+                        <div class="form-floating">
+                            <textarea class="form-control" name="descripcion" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                            <label for="floatingTextarea">Descripción</label>
+                        </div>
+                        <!-- Botones para crear o cancelar -->
+                        <div class="modal-footer">
+                            <button id="crear" type="submit">Editar</button>
+                            <button type="button" id="close-editar-'.$id.'">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>';
         }
-        ?>
-    </div>
-    <div class="boton-crear">
+    } else {
+        // Si no hay resultados
+        echo "<p>No hay programas disponibles</p>";
+    }
+    ?>
+</div>
+<div class="boton-crear">
     <button class="crear-act" id="openModalBtn">
         Crear programa<br>
         <i style="font-weight: bold; font-size: 30px;" class="bi bi-plus-lg"></i>
-    </button></div>
-    <dialog id="modal" class="modal">
-        <div class="modal-content">
-            <h2>Crear programa</h2>
-            <form action="crearPrograma.php" method="POST">
-                <div class="form-floating mb-3">
-                    <input type="hidden" name="user_id" value="2"> <!-- Cambiar el user_id -->
-                    <input class="form-control" id="floatingInput" name="nombre" placeholder="name@example.com">
-                    <label for="floatingInput">Titulo</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="date" class="form-control" id="floatingInput" name="fecha_ini" placeholder="name@example.com">
-                    <label for="floatingInput">Fecha de inicio</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="date" class="form-control" id="floatingInput" name="fecha_fin" placeholder="name@example.com">
-                    <label for="floatingInput">Fecha de conclusion</label>
-                </div>
-                <div class="form-floating">
-                    <textarea class="form-control" name="descripcion" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
-                    <label for="floatingTextarea">Descripción</label>
-                </div>
-                <!-- Botones para crear o cancelar -->
-                <div class="modal-footer">
-                    <button id="crear" type="submit">Crear</button>
-                    <button type="button" id="closeModalBtn">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </dialog>
+    </button>
+</div>
+<dialog id="modal" class="modal">
+    <div class="modal-content">
+        <h2>Crear programa</h2>
+        <form action="crearPrograma.php" method="POST">
+            <div class="form-floating mb-3">
+                <input type="hidden" name="user_id" value="2"> <!-- Cambiar el user_id -->
+                <input class="form-control" id="floatingInput" name="nombre" placeholder="name@example.com">
+                <label for="floatingInput">Titulo</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="date" class="form-control" id="floatingInput" name="fecha_ini" placeholder="name@example.com">
+                <label for="floatingInput">Fecha de inicio</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="date" class="form-control" id="floatingInput" name="fecha_fin" placeholder="name@example.com">
+                <label for="floatingInput">Fecha de conclusion</label>
+            </div>
+            <div class="form-floating">
+                <textarea class="form-control" name="descripcion" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                <label for="floatingTextarea">Descripción</label>
+            </div>
+            <!-- Botones para crear o cancelar -->
+            <div class="modal-footer">
+                <button id="crear" type="submit">Crear</button>
+                <button type="button" id="closeModalBtn">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</dialog>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="../../Resources/js/programas.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="../../Resources/js/programas.js"></script>
 </body>
 </html>

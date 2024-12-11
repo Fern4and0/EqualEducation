@@ -241,3 +241,54 @@ $row = $result->fetch_assoc(); // Solo se obtiene un registro, ya que es el usua
     </script>
 </body>
 </html>
+<script src="https://cdn.jsdelivr.net/npm/@polyglot/translate@1.0.0/dist/polyglot.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const polyglot = new Polyglot({
+            phrases: {
+                'es': {
+                    'Ocupacion': 'Ocupación',
+                    'Motivacion': 'Motivación',
+                    'Localidad': 'Localidad',
+                    'Habilidades Técnicas': 'Habilidades Técnicas',
+                    'Disponibilidad': 'Disponibilidad',
+                    'Registrado': 'Registrado',
+                    'Email': 'Correo Electrónico',
+                    'Editar': 'Editar',
+                    'Cerrar': 'Cerrar',
+                    'Actualizar': 'Actualizar'
+                },
+                'en': {
+                    'Ocupacion': 'Occupation',
+                    'Motivacion': 'Motivation',
+                    'Localidad': 'Location',
+                    'Habilidades Técnicas': 'Technical Skills',
+                    'Disponibilidad': 'Availability',
+                    'Registrado': 'Registered',
+                    'Email': 'Email',
+                    'Editar': 'Edit',
+                    'Cerrar': 'Close',
+                    'Actualizar': 'Update'
+                }
+            }
+        });
+
+        function translatePage(language) {
+            document.querySelectorAll('[data-translate]').forEach(function(element) {
+                const key = element.getAttribute('data-translate');
+                element.textContent = polyglot.t(key, { _: key });
+            });
+        }
+
+        document.getElementById('languageSwitcher').addEventListener('change', function() {
+            translatePage(this.value);
+        });
+
+        translatePage('es'); // Default language
+    });
+</script>
+
+<select id="languageSwitcher">
+    <option value="es">Español</option>
+    <option value="en">English</option>
+</select>
