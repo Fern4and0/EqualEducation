@@ -246,3 +246,43 @@ $is_logged_in = isset($_SESSION['user_id']) ? true : false;
     </script>    
 </body>
 </html>
+<!-- Forgot Password Modal -->
+<div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Restablecer Contraseña</h2>
+        <form id="forgotPasswordForm" method="post" action="../../Controllers/Login/ForgotPassword.php">
+            <div class="infield">
+                <input type="email" id="forgotEmail" name="email" required placeholder="E-mail" />
+                <label for="forgotEmail"></label>
+            </div>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var forgotPasswordModal = document.getElementById("forgotPasswordModal");
+        var forgotPasswordLink = document.getElementById("forgotPasswordLink");
+        var closeBtn = document.getElementsByClassName("close")[1];
+
+        forgotPasswordLink.addEventListener("click", function(event) {
+            event.preventDefault();
+            forgotPasswordModal.style.display = "block";
+        });
+
+        closeBtn.onclick = function() {
+            forgotPasswordModal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == forgotPasswordModal) {
+                forgotPasswordModal.style.display = "none";
+            }
+        }
+    });
+</script>
+
+<!-- Add Forgot Password Link -->
+<a href="#" id="forgotPasswordLink" class="forgot">Olvidé mi contraseña</a>
