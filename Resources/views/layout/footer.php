@@ -12,6 +12,9 @@
             <li class="list-inline-item">
                 <a href="#" class="text-white text-decoration-none">Contacto</a>
             </li>
+            <li class="list-inline-item">
+                <a href="#" class="text-white text-decoration-none">Traductor</a>
+            </li>
         </ul>
         <p class="small mt-2">Diseñado por EqualEducation</p>
     </div>

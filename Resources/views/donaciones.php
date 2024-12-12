@@ -12,11 +12,17 @@
     <link rel="stylesheet" href="../css/styles_index.css">
     <link rel="stylesheet" href="../css/styles_donaciones.css">
     <style>.ie-panel{display: none;background: #212121;padding: 10px 0;box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3);clear: both;text-align:center;position: relative;z-index: 1;} html.ie-10 .ie-panel, html.lt-ie-10 .ie-panel {display: block;}</style>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'es', includedLanguages: 'en'}, 'google_translate_element');
+      }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   </head>
   <body>
     <div class="page">
     <?php include('header.php');
-    $user_id = $_SESSION['user_id'];
+    //$user_id = $_SESSION['user_id'];
     ?>
       <section class="parallax-container" data-parallax-img="../../Public/image/imgDonation.jpg">
         <div class="parallax-content breadcrumbs-custom context-dark">
@@ -111,6 +117,7 @@
                   <li><a href="../views/nosotros.html">Equipo</a></li>
                   <li><a href="../views/política_privacidad.html">Política de privacidad</a></li>
                   <li><a href="../views/contacto.html">Contacto</a></li>
+                  <li><a href="#" id="google_translate_element">Traducir</a></li>
                 </ul>
               </div>
             </div>

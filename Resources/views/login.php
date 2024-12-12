@@ -1,4 +1,4 @@
-<a?php
+<?php
 // Verifica si el usuario ya tiene una sesión activa
 session_start();
 $is_logged_in = isset($_SESSION['user_id']) ? true : false;
@@ -162,6 +162,16 @@ $is_logged_in = isset($_SESSION['user_id']) ? true : false;
             <p>Para más detalles, consulta nuestra <a href="política_privacidad.html">[Política de Privacidad]</a>.</p>
         </div>
     </div>
+
+    <!-- Google Translate Element -->
+    <div id="google_translate_element"></div>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'es', includedLanguages: 'en'}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script>
     document.addEventListener("DOMContentLoaded", function () {

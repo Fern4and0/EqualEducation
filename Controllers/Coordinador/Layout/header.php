@@ -21,3 +21,17 @@
             </ul>
         </div>
     </nav>
+    <?php
+    // Check if translation is enabled from administradores.php
+    $translationEnabled = true; // This should be set based on your actual logic
+
+    if ($translationEnabled) {
+        echo '<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>';
+        echo '<script>
+            function googleTranslateElementInit() {
+                new google.translate.TranslateElement({pageLanguage: "es", includedLanguages: "en"}, "google_translate_element");
+            }
+        </script>';
+        echo '<div id="google_translate_element" style="display: none;"></div>';
+    }
+    ?>
