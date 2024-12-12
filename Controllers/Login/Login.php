@@ -1,6 +1,8 @@
 <?php
 session_start(); // Iniciamos la sesión
 
+$is_logged_in = isset($_SESSION['user_id']) ? true : false;
+
 include '../../DB/DB.php'; // Incluimos la conexión a la base de datos
 
 $error = ''; // Inicializamos la variable de error
@@ -55,19 +57,90 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Verificamos si la solicitud es de
     <title>Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../../Resources/css/styles_login.css">
+    <style>
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .checkbox-container label a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .checkbox-container label a:hover {
+            text-decoration: underline;
+        }
+    </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var errorElement = document.getElementById("error-message");
-            if (errorElement) {
-                setTimeout(function() {
-                    errorElement.style.display = 'none';
-                }, 3000); // 5000 milisegundos = 5 segundos
+            var modal = document.getElementById("termsModal");
+            var termsLink = document.querySelectorAll(".forgot");
+            var closeBtn = document.getElementsByClassName("close")[0];
+
+            termsLink.forEach(link => {
+                link.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    modal.style.display = "block";
+                });
+            });
+
+            closeBtn.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
             }
         });
     </script>
 </head>
 <body>
-    <div class="container" id="container">
+    <div class="container" id="container" data-logged-in="<?php echo $is_logged_in ? 'true' : 'false'; ?>">
         <div class="form-container sign-up-container">
             <form method="post" action="../../Controllers/Login/Registro.php" id="formularioRegistro">
                 <h1>Crear cuenta</h1>
@@ -80,12 +153,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Verificamos si la solicitud es de
                     <label for="email"></label>
                 </div>
                 <div class="infield">
-                    <input type="password" id="password" name="password" required placeholder="Constraseña"/>
-                    <label for="password"></label>   
+                    <input type="password" id="password" name="password" required placeholder="Contraseña" minlength="8"/>
+                    <label for="password"></label>
                 </div>
-                <a href="#" class="forgot">Términos y condiciones</a>
-                <a href="#" class="forgot" id="forgotPasswordLink">Olvidé mi contraseña</a>
-                <button type="submit">Registrarse</button>
+                <div class="checkbox-container">
+                    <a href="#" class="forgot">Términos y condiciones</a>
+                    <input type="checkbox" id="termsCheckbox" name="termsCheckbox" required />
+                    <label for="termsCheckbox"><a href="#" class="forgot">Términos y condiciones</a></label>
+                </div>
+                <button type="submit" id="registerButton">Registrarse</button>
             </form>
         </div>
         <div class="form-container sign-in-container">
@@ -105,7 +181,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Verificamos si la solicitud es de
                 }
                 ?>
                 <a href="#" class="forgot">Términos y condiciones</a>
-                <a href="#" class="forgot" id="forgotPasswordLink">Olvidé mi contraseña</a>
                 <button type="submit">Iniciar sesión</button>
             </form>
         </div>
@@ -125,6 +200,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Verificamos si la solicitud es de
             <button id="overlayBtn"></button>
         </div>
     </div>
+
+    <!-- Modal for Terms and Conditions -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Términos y Condiciones</h2>
+            <p>Bienvenido a EqualEducation. Al usar esta plataforma, aceptas cumplir con nuestras normas, incluyendo la gestión responsable de tu cuenta y el uso exclusivo con fines educativos y legales. Nos reservamos el derecho de gestionar o restringir el acceso si se detecta algún mal uso.</p>
+            <p>Para más detalles, consulta nuestra <a href="política_privacidad.html">[Política de Privacidad]</a>.</p>
+        </div>
+    </div>
+
+    <!-- Google Translate Element -->
+    <div id="google_translate_element"></div>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'es', includedLanguages: 'en'}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Verifica si el usuario está registrado
+            const container = document.getElementById("container");
+            const isLoggedIn = container.dataset.loggedIn === "true";
+
+            if (isLoggedIn) {
+                // Selecciona todos los inputs y botones del formulario de registro
+                const formInputs = document.querySelectorAll("#formularioRegistro input, #formularioRegistro button");
+
+                // Desactiva los inputs y botones
+                formInputs.forEach(input => {
+                    input.disabled = true;
+
+                    // Añade un evento para mostrar el mensaje cuando se intente interactuar
+                    input.addEventListener("click", () => {
+                        alert("Ya estás registrado. Por favor, inicia sesión.");
+                    });
+                });
+
+                // Opcional: Cambiar el estilo del formulario para indicar que está desactivado
+                const form = document.getElementById("formularioRegistro");
+                form.style.opacity = "0.5"; // Hace que el formulario se vea desactivado
+                form.style.pointerEvents = "none"; // Evita cualquier interacción
+            }
+        });
+    </script>
     <script>
         const container = document.getElementById('container');
         const overlayCon = document.getElementById('overlayCon');
@@ -139,190 +262,74 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Verificamos si la solicitud es de
             })
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const formularioRegistro = document.getElementById("formularioRegistro");
+            const passwordInput = document.getElementById("password");
+            const termsCheckbox = document.getElementById("termsCheckbox");
+            const registerButton = document.getElementById("registerButton");
+
+            formularioRegistro.addEventListener("submit", function (event) {
+                let valid = true;
+
+                // Validación de la contraseña (mínimo 8 caracteres)
+                if (passwordInput.value.length < 8) {
+                    alert("La contraseña debe tener al menos 8 caracteres.");
+                    valid = false;
+                }
+
+                // Validación del checkbox
+                if (!termsCheckbox.checked) {
+                    alert("Debes aceptar los términos y condiciones para registrarte.");
+                    valid = false;
+                }
+
+                // Evita el envío del formulario si no es válido
+                if (!valid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Restablecer Contraseña</h2>
+            <form id="forgotPasswordForm" method="post" action="../../Controllers/Login/ForgotPassword.php">
+                <div class="infield">
+                    <input type="email" id="forgotEmail" name="email" required placeholder="E-mail" />
+                    <label for="forgotEmail"></label>
+                </div>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var forgotPasswordModal = document.getElementById("forgotPasswordModal");
+            var forgotPasswordLink = document.getElementById("forgotPasswordLink");
+            var closeBtn = document.getElementsByClassName("close")[1];
+
+            forgotPasswordLink.addEventListener("click", function(event) {
+                event.preventDefault();
+                forgotPasswordModal.style.display = "block";
+            });
+
+            closeBtn.onclick = function() {
+                forgotPasswordModal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == forgotPasswordModal) {
+                    forgotPasswordModal.style.display = "none";
+                }
+            }
+        });
+    </script>
+
+    <!-- Add Forgot Password Link -->
+    <a href="#" id="forgotPasswordLink" class="forgot">Olvidé mi contraseña</a>
 </body>
 </html>
-<!-- Modal for Forgot Password -->
-<div id="forgotPasswordModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Restablecer contraseña</h2>
-        <form id="forgotPasswordForm" method="post" action="../../Controllers/Login/ForgotPassword.php">
-            <div class="infield">
-                <input type="email" id="resetEmail" name="resetEmail" required placeholder="Correo electrónico"/>
-                <label for="resetEmail"></label>
-            </div>
-            <button type="submit">Enviar enlace de restablecimiento</button>
-        </form>
-    </div>
-</div>
-
-<!-- Modal for Reset Password -->
-<div id="resetPasswordModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Escriba la nueva contraseña</h2>
-        <form id="resetPasswordForm" method="post" action="../../Controllers/Login/ResetPassword.php">
-            <div class="infield">
-                <input type="password" id="newPassword" name="newPassword" required placeholder="Nueva contraseña"/>
-                <label for="newPassword"></label>
-                <div id="passwordStrength"></div>
-            </div>
-            <button type="submit">Restablecer contraseña</button>
-        </form>
-    </div>
-</div>
-
-<script>
-    // Get the modal
-    var forgotPasswordModal = document.getElementById("forgotPasswordModal");
-    var resetPasswordModal = document.getElementById("resetPasswordModal");
-
-    // Get the button that opens the modal
-    var forgotPasswordBtn = document.getElementById("forgotPasswordLink");
-
-    // Get the <span> element that closes the modal
-    var spans = document.getElementsByClassName("close");
-
-    // When the user clicks the button, open the modal 
-    forgotPasswordBtn.onclick = function() {
-        forgotPasswordModal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    for (var i = 0; i < spans.length; i++) {
-        spans[i].onclick = function() {
-            this.parentElement.parentElement.style.display = "none";
-        }
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == forgotPasswordModal || event.target == resetPasswordModal) {
-            event.target.style.display = "none";
-        }
-    }
-
-    // Password strength meter
-    var newPassword = document.getElementById('newPassword');
-    var passwordStrength = document.getElementById('passwordStrength');
-
-    newPassword.addEventListener('input', function() {
-        var val = newPassword.value;
-        var strength = 0;
-
-        if (val.length >= 8) strength++;
-        if (val.match(/[a-z]+/)) strength++;
-        if (val.match(/[A-Z]+/)) strength++;
-        if (val.match(/[0-9]+/)) strength++;
-        if (val.match(/[$@#&!]+/)) strength++;
-
-        switch (strength) {
-            case 0:
-            case 1:
-                passwordStrength.innerHTML = '<span style="color:red">Baja</span>';
-                break;
-            case 2:
-                passwordStrength.innerHTML = '<span style="color:orange">Media</span>';
-                break;
-            case 3:
-            case 4:
-                passwordStrength.innerHTML = '<span style="color:green">Alta</span>';
-                break;
-        }
-    });
-</script>
-// Add a button for "Forgot Password" and modal for entering email
-echo '<a href="#" class="forgot" id="forgotPasswordLink">Olvidé mi contraseña</a>';
-
-// Modal for Forgot Password
-echo '
-<div id="forgotPasswordModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Restablecer contraseña</h2>
-        <form id="forgotPasswordForm" method="post" action="../../Controllers/Login/ForgotPassword.php">
-            <div class="infield">
-                <input type="email" id="resetEmail" name="resetEmail" required placeholder="Correo electrónico"/>
-                <label for="resetEmail"></label>
-            </div>
-            <button type="submit">Enviar enlace de restablecimiento</button>
-        </form>
-    </div>
-</div>';
-
-// Modal for Reset Password
-echo '
-<div id="resetPasswordModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Escriba la nueva contraseña</h2>
-        <form id="resetPasswordForm" method="post" action="../../Controllers/Login/ResetPassword.php">
-            <div class="infield">
-                <input type="password" id="newPassword" name="newPassword" required placeholder="Nueva contraseña"/>
-                <label for="newPassword"></label>
-                <div id="passwordStrength"></div>
-            </div>
-            <button type="submit">Restablecer contraseña</button>
-        </form>
-    </div>
-</div>';
-
-echo '
-<script>
-    // Get the modal
-    var forgotPasswordModal = document.getElementById("forgotPasswordModal");
-    var resetPasswordModal = document.getElementById("resetPasswordModal");
-
-    // Get the button that opens the modal
-    var forgotPasswordBtn = document.getElementById("forgotPasswordLink");
-
-    // Get the <span> element that closes the modal
-    var spans = document.getElementsByClassName("close");
-
-    // When the user clicks the button, open the modal 
-    forgotPasswordBtn.onclick = function() {
-        forgotPasswordModal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    for (var i = 0; i < spans.length; i++) {
-        spans[i].onclick = function() {
-            this.parentElement.parentElement.style.display = "none";
-        }
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == forgotPasswordModal || event.target == resetPasswordModal) {
-            event.target.style.display = "none";
-        }
-    }
-
-    // Password strength meter
-    var newPassword = document.getElementById("newPassword");
-    var passwordStrength = document.getElementById("passwordStrength");
-
-    newPassword.addEventListener("input", function() {
-        var val = newPassword.value;
-        var strength = 0;
-
-        if (val.length >= 8) strength++;
-        if (val.match(/[a-z]+/)) strength++;
-        if (val.match(/[A-Z]+/)) strength++;
-        if (val.match(/[0-9]+/)) strength++;
-
-        switch (strength) {
-            case 0:
-            case 1:
-                passwordStrength.innerHTML = "<span style=\'color:red\'>Baja</span>";
-                break;
-            case 2:
-                passwordStrength.innerHTML = "<span style=\'color:orange\'>Media</span>";
-                break;
-            case 3:
-            case 4:
-                passwordStrength.innerHTML = "<span style=\'color:green\'>Alta</span>";
-                break;
-        }
-    });
-</script>';

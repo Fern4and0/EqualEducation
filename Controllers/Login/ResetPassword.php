@@ -42,7 +42,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->execute();
 
             if ($stmt->affected_rows > 0) {
-                $error = "Contraseña restablecida con éxito.";
+                $_SESSION['password_reset_success'] = true;
+                header("Location: ../../Resources/Views/login.php"); // Redirigir al login
+                exit();
             } else {
                 $error = "Error al restablecer la contraseña.";
             }
