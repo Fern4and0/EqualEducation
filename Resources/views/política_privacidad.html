@@ -72,3 +72,18 @@
     </div>
 </body>
 </html>
+</script>
+<script>
+    function translatePage() {
+        var script = document.createElement('script');
+        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        document.body.appendChild(script);
+    }
+
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'es', includedLanguages: 'en,es'}, 'google_translate_element');
+    }
+
+    window.onload = translatePage;
+</script>
+<div id="google_translate_element" style="display: none;"></div>

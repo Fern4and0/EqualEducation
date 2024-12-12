@@ -60,8 +60,23 @@ function getRoleName($id_rol) {
             margin-bottom: 20px;
         }
     </style>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'es', includedLanguages: 'en'}, 'google_translate_element');
+        }
+    </script>
 </head>
 <body>
+    <div id="google_translate_element" style="display:none;"></div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var translateElement = document.getElementById("google_translate_element");
+            if (translateElement) {
+                translateElement.style.display = "block";
+            }
+        });
+    </script>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#" style="padding: 10;">
             <img src="../../Resources/Images/logo.png" width="50" height="50" class="d-inline-block align-top" alt="Equal Education Logo">
@@ -261,3 +276,25 @@ function getRoleName($id_rol) {
     </script>
 </body>
 </html>
+<?php
+// Verifica si la traducción está activada desde Administradores.php
+$translate = isset($_SESSION['translate']) ? $_SESSION['translate'] : false;
+
+if ($translate) {
+    echo '<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>';
+    echo '<script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: "es", includedLanguages: "en"}, "google_translate_element");
+        }
+    </script>';
+    echo '<div id="google_translate_element" style="display:none;"></div>';
+    echo '<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var translateElement = document.getElementById("google_translate_element");
+            if (translateElement) {
+                translateElement.style.display = "block";
+            }
+        });
+    </script>';
+}
+?>

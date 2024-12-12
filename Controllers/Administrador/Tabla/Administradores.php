@@ -60,8 +60,14 @@ function getRoleName($id_rol) {
             margin-bottom: 20px;
         }
     </style>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'es', includedLanguages: 'en'}, 'google_translate_element');
+        }
+    </script>
 </head>
-<body>
+<body onload="googleTranslateElementInit()">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#" style="padding: 10;">
             <img src="../../Resources/Images/logo.png" width="50" height="50" class="d-inline-block align-top" alt="Equal Education Logo">
@@ -351,3 +357,21 @@ function getRoleName($id_rol) {
     </div>
 </body>
 </html>
+<!-- Botón para traducir la página -->
+<button class="btn btn-secondary btn-sm" id="translateButton" style="width: 40px; height: 40px;">
+    <i class="fas fa-language"></i>
+</button>
+
+<script>
+    document.getElementById('translateButton').addEventListener('click', function() {
+        var script = document.createElement('script');
+        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        document.body.appendChild(script);
+    });
+
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'es', includedLanguages: 'en'}, 'google_translate_element');
+    }
+</script>
+
+<div id="google_translate_element" style="display:none;"></div>
