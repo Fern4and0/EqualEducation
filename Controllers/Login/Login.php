@@ -85,6 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Verificamos si la solicitud es de
                     <label for="password"></label>   
                 </div>
                 <a href="#" class="forgot">Términos y condiciones</a>
+                <a href="#" class="forgot" id="forgotPasswordLink">Olvidé mi contraseña</a>
                 <button type="submit">Registrarse</button>
             </form>
         </div>
@@ -141,3 +142,93 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") { // Verificamos si la solicitud es de
     </script>
 </body>
 </html>
+<!-- Modal for Forgot Password -->
+<div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Restablecer contraseña</h2>
+        <form id="forgotPasswordForm" method="post" action="../../Controllers/Login/ForgotPassword.php">
+            <div class="infield">
+                <input type="email" id="resetEmail" name="resetEmail" required placeholder="Correo electrónico"/>
+                <label for="resetEmail"></label>
+            </div>
+            <button type="submit">Enviar enlace de restablecimiento</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal for Reset Password -->
+<div id="resetPasswordModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Escriba la nueva contraseña</h2>
+        <form id="resetPasswordForm" method="post" action="../../Controllers/Login/ResetPassword.php">
+            <div class="infield">
+                <input type="password" id="newPassword" name="newPassword" required placeholder="Nueva contraseña"/>
+                <label for="newPassword"></label>
+                <div id="passwordStrength"></div>
+            </div>
+            <button type="submit">Restablecer contraseña</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Get the modal
+    var forgotPasswordModal = document.getElementById("forgotPasswordModal");
+    var resetPasswordModal = document.getElementById("resetPasswordModal");
+
+    // Get the button that opens the modal
+    var forgotPasswordBtn = document.querySelector(".forgot");
+
+    // Get the <span> element that closes the modal
+    var spans = document.getElementsByClassName("close");
+
+    // When the user clicks the button, open the modal 
+    forgotPasswordBtn.onclick = function() {
+        forgotPasswordModal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    for (var i = 0; i < spans.length; i++) {
+        spans[i].onclick = function() {
+            this.parentElement.parentElement.style.display = "none";
+        }
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == forgotPasswordModal || event.target == resetPasswordModal) {
+            event.target.style.display = "none";
+        }
+    }
+
+    // Password strength meter
+    var newPassword = document.getElementById('newPassword');
+    var passwordStrength = document.getElementById('passwordStrength');
+
+    newPassword.addEventListener('input', function() {
+        var val = newPassword.value;
+        var strength = 0;
+
+        if (val.length >= 8) strength++;
+        if (val.match(/[a-z]+/)) strength++;
+        if (val.match(/[A-Z]+/)) strength++;
+        if (val.match(/[0-9]+/)) strength++;
+        if (val.match(/[$@#&!]+/)) strength++;
+
+        switch (strength) {
+            case 0:
+            case 1:
+                passwordStrength.innerHTML = '<span style="color:red">Baja</span>';
+                break;
+            case 2:
+                passwordStrength.innerHTML = '<span style="color:orange">Media</span>';
+                break;
+            case 3:
+            case 4:
+                passwordStrength.innerHTML = '<span style="color:green">Alta</span>';
+                break;
+        }
+    });
+</script>
